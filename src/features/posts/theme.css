@@ -1,13 +1,19 @@
 
-
 .listWrapper{
  background-color: #eee;
  height: 100%;
  overflow: scroll;
 }
 
-
 .itemWrapper{
  padding: 3px 6px;
  text-align: center;
+}
+
+.buttonsGroup button{
+  margin-right: 5px;
+}
+
+.buttonsGroup button:last-child{
+ margin-right: 0;
 }

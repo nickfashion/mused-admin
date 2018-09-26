@@ -25,6 +25,10 @@ export default class Posts extends Component {
         })
     };
 
+    deletePost = id => {
+        this.props.deletePost(id);
+    };
+
     cancel = () => {
         this.setState({isModalShown: false})
     };
@@ -44,6 +48,7 @@ export default class Posts extends Component {
                         <ListGroupItem key={i}>
                             <PostItem
                                 editPost={this.editPost}
+                                deletePost={this.deletePost}
                                 post={post} />
                         </ListGroupItem>
                     )) }

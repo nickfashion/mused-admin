@@ -18,13 +18,14 @@ function CollectionHOC(Posts) {
 
         render() {
             const { root: { posts } } = this.props;
-            const { listOfPosts, getPostData, setPostData, addNewPost } = posts;
+            const { listOfPosts, getPostData, setPostData, addNewPost, deletePost } = posts;
 
             return <Posts
                 posts={listOfPosts}
                 getPostData={getPostData}
                 setPostData={setPostData}
                 addNewPost={addNewPost}
+                deletePost={deletePost}
             />
         }
 

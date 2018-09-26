@@ -5,7 +5,7 @@ const theme = require('../theme.css');
 
 export default class PostItem extends Component {
     render() {
-        const { post, editPost } = this.props;
+        const { post, editPost, deletePost } = this.props;
         const { postId, authorName, authorProfilePhoto } = post;
 
         return (
@@ -16,10 +16,14 @@ export default class PostItem extends Component {
                 <Col xs="6">
                     <h4>{ authorName }</h4>
                 </Col>
-                <Col xs="4">
+                <Col xs="4" className={theme.buttonsGroup}>
                     <Button outline color="secondary"
                         onClick={() => editPost(postId)}>
-                            {`Edit #${postId}`}
+                        Edit
+                    </Button>
+                    <Button outline color="secondary"
+                        onClick={() => deletePost(postId)}>
+                        Delete
                     </Button>
                 </Col>
             </Row>

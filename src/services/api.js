@@ -33,6 +33,11 @@ export const addPost = (post) => {
     return client.callFunction("addPost", [ post ]);
 };
 
+export const deletePostById = (postId) => {
+    const client = getClient();
+    return client.callFunction("deletePostById", [ postId ]);
+};
+
 export const updatePost = (post) => {
     const client = getClient();
     return client.callFunction("updatePost", [ post ]);
