@@ -97,11 +97,20 @@ export default class AddOrEditPostModal extends Component {
 
     setSlots = () => {
         return SLOTS.map((slot, i) => {
-            return this.state[`slot${i + 1}Product`] ? {
-                productId: this.state[`slot${i + 1}Product`],
-                alternatives: this.state[`slot${i + 1}Alts`] ? this.state[`slot${i + 1}Alts`].split('\n') : []
-            } : null;
+            const productId = this.state[`slot${i + 1}Product`];
+            if (!productId) return null;
+            const alts = this.getAlternatives(this.state[`slot${i + 1}Alts`]);
+            return {
+                productId: +productId,
+                alternatives: alts,
+            };
         }).filter(Boolean);
+    };
+
+    getAlternatives = (alternatives) => {
+        return alternatives ?
+            alternatives.split('\n').filter(Boolean).map(id => +id) :
+            []
     };
 
     render() {

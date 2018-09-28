@@ -18,14 +18,13 @@ export default class ObservableStore {
 
     @action
     setPostData = async (post) => {
-        await updatePost(post);
-        this.collectionUpdatePost(post);
+        const updatedPost = await updatePost(post);
+        this.collectionUpdatePost(updatedPost);
     };
 
     @action
     addNewPost = async (post) => {
         post.postId = this.posts.length + 1;
-        // TODO: test it
         try {
             const newPost = await addPost(post);
             this.posts = [...this.posts, newPost];
@@ -53,7 +52,7 @@ export default class ObservableStore {
 
     collectionUpdatePost = post => {
         const index = _.findIndex(this.posts, {postId: post.postId});
-        this.posts.splice(index, 1, _.merge(this.posts[index], post));
+        this.posts.splice(index, 1, post);
         this.posts = [...this.posts];
     };
 
