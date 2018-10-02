@@ -19,7 +19,7 @@ export default class ObservableStore {
     @action
     setPostData = async (post) => {
         const updatedPost = await updatePost(post);
-        this.collectionUpdatePost(updatedPost);
+        this.collectionUpdatePost({...updatedPost, _id: post.postId});
     };
 
     @action
