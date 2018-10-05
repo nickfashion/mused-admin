@@ -19,12 +19,11 @@ export default class ObservableStore {
     @action
     setPostData = async (post) => {
         const updatedPost = await updatePost(post);
-        this.collectionUpdatePost({...updatedPost, _id: post.postId});
+        this.collectionUpdatePost({...updatedPost, postId: post.postId});
     };
 
     @action
     addNewPost = async (post) => {
-        post.postId = this.posts.length + 1;
         try {
             await addPost(post);
             // this.posts = [...this.posts, newPost];
@@ -48,7 +47,7 @@ export default class ObservableStore {
 
     @action
     getPostData = (id) => {
-        return _.find(this.posts, post => post._id === id);
+        return _.find(this.posts, post => post.postId === id);
     };
 
     collectionUpdatePost = post => {
@@ -58,7 +57,7 @@ export default class ObservableStore {
     };
 
     collectionDeletePost = id => {
-        const index = _.findIndex(this.posts, {_id: id});
+        const index = _.findIndex(this.posts, {postId: id});
         this.posts.splice(index, 1);
         this.posts = [...this.posts];
     };

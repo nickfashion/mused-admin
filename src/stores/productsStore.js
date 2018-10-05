@@ -2,6 +2,7 @@ import { observable, action, computed } from 'mobx';
 import _ from 'lodash'
 
 import { getAllProducts } from '../services';
+import { unusedCategories } from './constants';
 
 const CHUNK_SIZE = 100;
 
@@ -76,15 +77,22 @@ export default class ObservableStore {
 
     @action
     getAllProducts = async () => {
-        this.allProducts = await getAllProducts();
-        this.products = this.allProducts;
+        // this.allProducts = await getAllProducts();
+        await getAllProducts().then( products => {
+            this.allProducts = products;
+            this.products = products;
         this.categories = this.getCategories();
+        })
+        
     };
 
     getCategories = () => {
         if (!this.allProducts.length) return [];
         let categories = [];
         this.allProducts.forEach(product => {
+            if (unusedCategories.includes(product.category)) {
+                return;
+            }
             if (!categories.includes(product.category)) {
                 categories = [...categories, product.category]
             }
