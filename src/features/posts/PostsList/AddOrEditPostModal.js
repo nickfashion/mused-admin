@@ -19,19 +19,9 @@ const submitText = {
     add: 'Add Post'
 };
 
-const SLOTS = [
-    1, 2, 3, 4, 5
-];
-
-const getSlots = slots => {
-    const s1 = {};
-    if (!slots) return s1;
-    slots.forEach((slot, i) => {
-        s1[`slot${i + 1}Product`] = slot.productId;
-        s1[`slot${i + 1}Alts`] = slot.alternatives.join('\n');
-    });
-
-    return s1;
+const getProductIds = (productIds) => {
+    if (!productIds.length) return '';
+    return productIds.join('\n');
 };
 
 export default class AddOrEditPostModal extends Component {
@@ -41,20 +31,8 @@ export default class AddOrEditPostModal extends Component {
         authorName: '',
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
-        backgroundImageURL: '',
-
-        slot1Product: '',
-        slot2Product: '',
-        slot3Product: '',
-        slot4Product: '',
-        slot5Product: '',
-
-        slot1Alts: '',
-        slot2Alts: '',
-        slot3Alts: '',
-        slot4Alts: '',
-        slot5Alts: '',
-
+        title: '',
+        productIds: '',
         errorMsg: null
     };
 
@@ -66,13 +44,12 @@ export default class AddOrEditPostModal extends Component {
                 const postData = getPostData(postId);
 
                 this.type = types.edit;
-                const slots = getSlots(postData.slots);
+                const productIds = getProductIds(postData.productIds);
                 this.setState({
                     authorName: postData.authorName,
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
-                    backgroundImageURL: postData.backgroundImage || '',
-                    ...slots
+                    productIds
                 })
             } else {
                 this.type = types.add;
@@ -87,29 +64,17 @@ export default class AddOrEditPostModal extends Component {
             authorName: this.state.authorName,
             authorProfilePhoto: this.state.authorProfilePhotoURL,
             inspirationalImage: this.state.inspirationalImageURL,
-            backgroundImage: this.state.backgroundImageURL,
-            slots: this.setSlots()
+            productIds: this.setProductIds(this.state.productIds),
+            postType: 'list'
         };
 
         this.type === types.edit ? setPostData({postId, ...post}) : addNewPost(post);
         onClose()
     };
 
-    setSlots = () => {
-        return SLOTS.map((slot, i) => {
-            const productId = this.state[`slot${i + 1}Product`];
-            if (!productId) return null;
-            const alts = this.getAlternatives(this.state[`slot${i + 1}Alts`]);
-            return {
-                productId: +productId,
-                alternatives: alts,
-            };
-        }).filter(Boolean);
-    };
-
-    getAlternatives = (alternatives) => {
-        return alternatives ?
-            alternatives.split('\n').filter(Boolean).map(id => +id) :
+    setProductIds = (productIds) => {
+        return productIds ?
+            productIds.split('\n').filter(Boolean).map(id => +id) :
             []
     };
 
@@ -148,14 +113,6 @@ export default class AddOrEditPostModal extends Component {
                                         id="inspirationalImage"
                                         type="text" />
                                 </FormGroup>
-                                <FormGroup>
-                                    <Label for="backgroundImageURL">Background Image URL</Label>
-                                    <Input
-                                        value={this.state.backgroundImageURL}
-                                        onChange={this.handleBackgroundImage}
-                                        id="backgroundImageURL"
-                                        type="text" />
-                                </FormGroup>
                                 <Row>
                                     { this.renderSlots() }
                                 </Row>
@@ -175,56 +132,34 @@ export default class AddOrEditPostModal extends Component {
     }
 
     renderSlots = () =>
-        SLOTS.map((slot, i) => {
-            return (
-                <Col style={{width: '20%'}} key={i}>
+            (
+                <Col style={{maxWidth: '20%'}}>
                     <FormGroup>
-                        <Label for={`slot${slot}`}>{`Slot #${slot} Product Id`}</Label>
+                        <Label for={'productIds'}>Product Ids</Label>
                         <Input
-                            value={this.state[`slot${slot}Product`]}
-                            onChange={(event) => this.handleSlotProduct(slot, event.target.value)}
-                            id={`slot${slot}`}
-                            type="text" />
-                        <Label for={`slot${slot}Alts`}>{`Slot #${slot} Alternatives`}</Label>
-                        <Input
-                            value={this.state[`slot${slot}Alts`]}
-                            onChange={(event) => this.handleSlotAlts(slot, event.target.value)}
-                            id={`slot${slot}Alts`}
+                            value={this.state.productIds}
+                            onChange={(event) => this.handleProductIds(event.target.value)}
+                            id={'productIds'}
                             type="textarea"
                             rows="8" />
                     </FormGroup>
                 </Col>
-            )
-        });
+            );
 
     clearForm = () => this.setState({
         authorName: '',
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
-        backgroundImageURL: '',
-        slot1Product: '',
-        slot2Product: '',
-        slot3Product: '',
-        slot4Product: '',
-        slot5Product: '',
-        slot1Alts: '',
-        slot2Alts: '',
-        slot3Alts: '',
-        slot4Alts: '',
-        slot5Alts: '',
+        productIds: ''
     });
 
     handleAuthorNameChange = (event) => this.setState({authorName: event.target.value});
     handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
     handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
-    handleBackgroundImage = (event) => this.setState({backgroundImageURL: event.target.value});
 
-    handleSlotProduct = (slot, value) => {
-        (isNumber(value) || value === '') &&
-            this.setState({[`slot${slot}Product`]: value});
-    };
-    handleSlotAlts = (slot, value) => {
+    handleProductIds = (value) => {
         (isNumber(value.replace(/\n/g,'')) || value === '') &&
-            this.setState({[`slot${slot}Alts`]: value});
-    }
+            this.setState({productIds: value});
+    };
+
 }

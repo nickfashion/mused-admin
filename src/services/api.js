@@ -23,9 +23,9 @@ export const getAllProducts = () => {
     return client.callFunction("getProducts");
 };
 
-export const getAllPosts = () => {
+export const getPostsByType = (type) => {
     const client = getClient();
-    return client.callFunction("getPosts");
+    return client.callFunction("getPostsByType", [type]);
 };
 
 export const addPost = (post) => {

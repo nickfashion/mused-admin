@@ -9,3 +9,7 @@ export const unusedCategories = [
 'eyewear',
 'womens-eyewear'
 ];
+
+export const INSPIRE_POSTS = 'inspire';
+export const LIST_POSTS = 'list';
+export const PRODUCT_POSTS = 'product';

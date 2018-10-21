@@ -5,8 +5,28 @@ import {
     TabContent, TabPane,
     Nav, NavItem, NavLink } from 'reactstrap';
 import { ListBuilder } from "../../list-builder";
-import { Posts } from "../../posts";
+import { PostsInspire, PostsList, PostsProduct } from "../../posts";
 import { AuthInfo } from "../../auth-info";
+import { PRODUCTS_TAB, POSTS_INSPIRE_TAB, POSTS_LIST_TAB, POSTS_PRODUCT_TAB } from '../constants';
+
+const tabList = [
+    {
+        name: PRODUCTS_TAB,
+        text: 'List of Products'
+    },
+    {
+        name: POSTS_INSPIRE_TAB,
+        text: 'Posts (Inspire)'
+    },
+    {
+        name: POSTS_LIST_TAB,
+        text: 'Posts (List)'
+    },
+    {
+        name: POSTS_PRODUCT_TAB,
+        text: 'Posts (Product)'
+    }
+]; 
 
 export default class Main extends Component {
     state = {
@@ -23,22 +43,7 @@ export default class Main extends Component {
                 <Row key={"navigation"}>
                     <Col  xs='12'>
                         <Nav tabs>
-                            <NavItem>
-                                <NavLink
-                                    className={classNames({ active: this.state.activeTab === 'products' })}
-                                    onClick={() => { this.toggleTab('products'); }}
-                                >
-                                    List of Products
-                                </NavLink>
-                            </NavItem>
-                            <NavItem>
-                                <NavLink
-                                    className={classNames({ active: this.state.activeTab === 'posts' })}
-                                    onClick={() => { this.toggleTab('posts'); }}
-                                >
-                                    Posts
-                                </NavLink>
-                            </NavItem>
+                            {tabList.map(this.renderTab)}
                         </Nav>
                     </Col>
                 </Row>
@@ -48,8 +53,14 @@ export default class Main extends Component {
                             <TabPane tabId="products">
                                 <ListBuilder />
                             </TabPane>
-                            <TabPane tabId="posts">
-                                <Posts />
+                            <TabPane tabId="postsInspire">
+                                <PostsInspire />
+                            </TabPane>
+                            <TabPane tabId="postsList">
+                                <PostsList />
+                            </TabPane>
+                            <TabPane tabId="postsProduct">
+                                <PostsProduct />
                             </TabPane>
                         </TabContent>
                     </Col>
@@ -65,4 +76,16 @@ export default class Main extends Component {
         }
     }
 
+    renderTab = (tabInfo, index) => {
+        return (
+            <NavItem key={index}>
+                <NavLink
+                    className={classNames({ active: this.state.activeTab === tabInfo.name })}
+                    onClick={() => { this.toggleTab( tabInfo.name); }}
+                >
+                   {tabInfo.text}
+                </NavLink>
+            </NavItem>
+        )
+    }
 };
