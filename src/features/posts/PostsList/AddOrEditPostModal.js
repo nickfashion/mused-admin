@@ -46,6 +46,7 @@ export default class AddOrEditPostModal extends Component {
                 this.type = types.edit;
                 const productIds = getProductIds(postData.productIds);
                 this.setState({
+                    title: postData.title || '',
                     authorName: postData.authorName,
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
@@ -61,6 +62,7 @@ export default class AddOrEditPostModal extends Component {
     savePost = () => {
         const { onClose, setPostData, addNewPost, postId } = this.props;
         const post = {
+            title: this.state.title,
             authorName: this.state.authorName,
             authorProfilePhoto: this.state.authorProfilePhotoURL,
             inspirationalImage: this.state.inspirationalImageURL,
@@ -89,6 +91,14 @@ export default class AddOrEditPostModal extends Component {
                     <Row>
                         <Col xs="12">
                             <Form>
+                                <FormGroup>
+                                    <Label for="title">Title</Label>
+                                    <Input
+                                        value={this.state.title}
+                                        onChange={this.handleTitle}
+                                        id="title"
+                                        type="text" />
+                                </FormGroup>
                                 <FormGroup>
                                     <Label for="authorName">Author Name</Label>
                                     <Input
@@ -147,6 +157,7 @@ export default class AddOrEditPostModal extends Component {
             );
 
     clearForm = () => this.setState({
+        title: '',
         authorName: '',
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
@@ -156,6 +167,7 @@ export default class AddOrEditPostModal extends Component {
     handleAuthorNameChange = (event) => this.setState({authorName: event.target.value});
     handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
     handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
+    handleTitle = (event) => this.setState({title: event.target.value});
 
     handleProductIds = (value) => {
         (isNumber(value.replace(/\n/g,'')) || value === '') &&

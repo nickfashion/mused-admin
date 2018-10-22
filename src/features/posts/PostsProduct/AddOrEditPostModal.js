@@ -23,6 +23,7 @@ export default class AddOrEditPostModal extends Component {
     type = types.add;
 
     state = {
+        title: '',
         authorName: '',
         authorProfilePhotoURL: '',
         productId: '',
@@ -38,7 +39,8 @@ export default class AddOrEditPostModal extends Component {
 
                 this.type = types.edit;
                 this.setState({
-                    authorName: postData.authorName,
+                    title: postData.title || '',
+                    authorName: postData.authorName || '',
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
                     productId: postData.productId || ''
                 })
@@ -52,6 +54,7 @@ export default class AddOrEditPostModal extends Component {
     savePost = () => {
         const { onClose, setPostData, addNewPost, postId } = this.props;
         const post = {
+            title: this.state.title,
             authorName: this.state.authorName,
             authorProfilePhoto: this.state.authorProfilePhotoURL,
             productId: Number(this.state.productId),
@@ -73,6 +76,14 @@ export default class AddOrEditPostModal extends Component {
                     <Row>
                         <Col xs="12">
                             <Form>
+                                <FormGroup>
+                                    <Label for="title">Title</Label>
+                                    <Input
+                                        value={this.state.title}
+                                        onChange={this.handleTitle}
+                                        id="title"
+                                        type="text" />
+                                </FormGroup>
                                 <FormGroup>
                                     <Label for="authorName">Author Name</Label>
                                     <Input
@@ -114,6 +125,7 @@ export default class AddOrEditPostModal extends Component {
 
 
     clearForm = () => this.setState({
+        title: '',
         authorName: '',
         authorProfilePhotoURL: '',
         productId: ''
@@ -121,6 +133,7 @@ export default class AddOrEditPostModal extends Component {
 
     handleAuthorNameChange = (event) => this.setState({authorName: event.target.value});
     handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
+    handleTitle = (event) => this.setState({title: event.target.value});
 
     handleProductId = (value) => {
         (isNumber(value) || value === '') &&
