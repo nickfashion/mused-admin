@@ -26,6 +26,7 @@ export default class AddOrEditPostModal extends Component {
         title: '',
         authorName: '',
         authorProfilePhotoURL: '',
+        inspirationalImageURL: '',
         productId: '',
         errorMsg: null
     };
@@ -42,6 +43,7 @@ export default class AddOrEditPostModal extends Component {
                     title: postData.title || '',
                     authorName: postData.authorName || '',
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
+                    inspirationalImageURL: postData.inspirationalImage || '',
                     productId: postData.productId || ''
                 })
             } else {
@@ -57,6 +59,7 @@ export default class AddOrEditPostModal extends Component {
             title: this.state.title,
             authorName: this.state.authorName,
             authorProfilePhoto: this.state.authorProfilePhotoURL,
+            inspirationalImage: this.state.inspirationalImageURL,
             productId: Number(this.state.productId),
             postType: 'product'
         };
@@ -101,6 +104,14 @@ export default class AddOrEditPostModal extends Component {
                                         type="text" />
                                 </FormGroup>
                                 <FormGroup>
+                                    <Label for="inspirationalImage">Inspirational Image URL</Label>
+                                    <Input
+                                        value={this.state.inspirationalImageURL}
+                                        onChange={this.handleInspirationalImage}
+                                        id="inspirationalImage"
+                                        type="text" />
+                                </FormGroup>
+                                <FormGroup>
                                     <Label for={'productId'}>Product Id</Label>
                                     <Input
                                         value={this.state.productId}
@@ -128,12 +139,15 @@ export default class AddOrEditPostModal extends Component {
         title: '',
         authorName: '',
         authorProfilePhotoURL: '',
+        inspirationalImageURL: '',
         productId: ''
     });
 
     handleAuthorNameChange = (event) => this.setState({authorName: event.target.value});
     handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
     handleTitle = (event) => this.setState({title: event.target.value});
+    handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
+
 
     handleProductId = (value) => {
         (isNumber(value) || value === '') &&
