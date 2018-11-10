@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { isNumber } from '../../../services/utils'
+import moment from 'moment';
+import { isNumber, dateMinusHours } from '../../../services/utils'
 
 const theme = require('../theme.css');
 
@@ -40,6 +41,8 @@ export default class AddOrEditPostModal extends Component {
     state = {
         title: '',
         authorName: '',
+        timeAgo: 0,
+        date: '',
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
         backgroundImageURL: '',
@@ -71,6 +74,7 @@ export default class AddOrEditPostModal extends Component {
                 this.setState({
                     title: postData.title || '',
                     authorName: postData.authorName || '',
+                    date: postData.date || '',
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
                     backgroundImageURL: postData.backgroundImage || '',
@@ -85,12 +89,22 @@ export default class AddOrEditPostModal extends Component {
 
     savePost = () => {
         const { onClose, setPostData, addNewPost, postId } = this.props;
+        const {
+            title,
+            authorName,
+            backgroundImage,
+            authorProfilePhoto,
+            inspirationalImage,
+            timeAgo,
+            date
+        } = this.state;
         const post = {
-            title: this.state.title,
-            authorName: this.state.authorName,
-            authorProfilePhoto: this.state.authorProfilePhotoURL,
-            inspirationalImage: this.state.inspirationalImageURL,
-            backgroundImage: this.state.backgroundImageURL,
+            title,
+            authorName,
+            date: this.type === types.add ? dateMinusHours(timeAgo) : date,
+            authorProfilePhoto,
+            inspirationalImage,
+            backgroundImage,
             slots: this.setSlots(),
             postType: 'inspire'
         };
@@ -144,6 +158,18 @@ export default class AddOrEditPostModal extends Component {
                                         id="authorName"
                                         type="text" />
                                 </FormGroup>
+                                {
+                                    type === types.add &&
+                                    <FormGroup>
+                                        <Label for="timeAgo">Time ago</Label>
+                                        <Input
+                                            value={this.state.timeAgo}
+                                            onChange={this.handleTimeAgo}
+                                            id="timeAgo"
+                                            type="number"
+                                            min="0" max="24" />
+                                    </FormGroup>
+                                }
                                 <FormGroup>
                                     <Label for="authorProfile">Author Profile Image URL</Label>
                                     <Input
@@ -212,6 +238,7 @@ export default class AddOrEditPostModal extends Component {
     clearForm = () => this.setState({
         title: '',
         authorName: '',
+        timeAgo: 0,
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
         backgroundImageURL: '',
@@ -232,6 +259,7 @@ export default class AddOrEditPostModal extends Component {
     handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
     handleBackgroundImage = (event) => this.setState({backgroundImageURL: event.target.value});
     handleTitle = (event) => this.setState({title: event.target.value});
+    handleTimeAgo = (event) => this.setState({timeAgo: event.target.value});
 
 
     handleSlotProduct = (slot, value) => {

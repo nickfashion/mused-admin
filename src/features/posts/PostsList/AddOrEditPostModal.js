@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { isNumber } from '../../../services/utils'
+import { isNumber, dateMinusHours } from '../../../services/utils'
 
 const theme = require('../theme.css');
 
@@ -30,6 +30,8 @@ export default class AddOrEditPostModal extends Component {
     state = {
         authorName: '',
         authorProfilePhotoURL: '',
+        timeAgo: 0,
+        date: '',
         inspirationalImageURL: '',
         title: '',
         productIds: '',
@@ -48,6 +50,7 @@ export default class AddOrEditPostModal extends Component {
                 this.setState({
                     title: postData.title || '',
                     authorName: postData.authorName,
+                    date: postData.date || '',
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
                     productIds
@@ -61,12 +64,21 @@ export default class AddOrEditPostModal extends Component {
 
     savePost = () => {
         const { onClose, setPostData, addNewPost, postId } = this.props;
+        const {
+            title,
+            authorName,
+            authorProfilePhoto,
+            inspirationalImage,
+            timeAgo,
+            date
+        } = this.state;
         const post = {
-            title: this.state.title,
-            authorName: this.state.authorName,
-            authorProfilePhoto: this.state.authorProfilePhotoURL,
-            inspirationalImage: this.state.inspirationalImageURL,
+            title,
+            authorName,
+            authorProfilePhoto,
+            inspirationalImage,
             productIds: this.setProductIds(this.state.productIds),
+            date: this.type === types.add ? dateMinusHours(timeAgo) : date,
             postType: 'list'
         };
 
@@ -107,6 +119,18 @@ export default class AddOrEditPostModal extends Component {
                                         id="authorName"
                                         type="text" />
                                 </FormGroup>
+                                {
+                                    type === types.add &&
+                                    <FormGroup>
+                                        <Label for="timeAgo">Time ago</Label>
+                                        <Input
+                                            value={this.state.timeAgo}
+                                            onChange={this.handleTimeAgo}
+                                            id="timeAgo"
+                                            type="number"
+                                            min="0" max="24" />
+                                    </FormGroup>
+                                }
                                 <FormGroup>
                                     <Label for="authorProfile">Author Profile Image URL</Label>
                                     <Input
@@ -159,6 +183,7 @@ export default class AddOrEditPostModal extends Component {
     clearForm = () => this.setState({
         title: '',
         authorName: '',
+        timeAgo: 0,
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
         productIds: ''
@@ -168,6 +193,7 @@ export default class AddOrEditPostModal extends Component {
     handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
     handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
     handleTitle = (event) => this.setState({title: event.target.value});
+    handleTimeAgo = (event) => this.setState({timeAgo: event.target.value});
 
     handleProductIds = (value) => {
         (isNumber(value.replace(/\n/g,'')) || value === '') &&
