@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import moment from 'moment';
+import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
 
 const theme = require('../theme.css');
@@ -46,6 +45,7 @@ export default class AddOrEditPostModal extends Component {
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
         backgroundImageURL: '',
+        pin: '',
 
         slot1Product: '',
         slot2Product: '',
@@ -58,6 +58,8 @@ export default class AddOrEditPostModal extends Component {
         slot3Alts: '',
         slot4Alts: '',
         slot5Alts: '',
+
+        dropdownOpen: false,
 
         errorMsg: null
     };
@@ -78,6 +80,7 @@ export default class AddOrEditPostModal extends Component {
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
                     backgroundImageURL: postData.backgroundImage || '',
+                    pin: typeof postData.pin !== 'undefined' && postData.pin.toString() || '',
                     ...slots
                 })
             } else {
@@ -93,8 +96,9 @@ export default class AddOrEditPostModal extends Component {
             title,
             authorName,
             backgroundImage,
-            authorProfilePhoto,
-            inspirationalImage,
+            authorProfilePhotoURL,
+            inspirationalImageURL,
+            pin, 
             timeAgo,
             date
         } = this.state;
@@ -102,8 +106,9 @@ export default class AddOrEditPostModal extends Component {
             title,
             authorName,
             date: this.type === types.add ? dateMinusHours(timeAgo) : date,
-            authorProfilePhoto,
-            inspirationalImage,
+            authorProfilePhoto: authorProfilePhotoURL,
+            inspirationalImage: inspirationalImageURL,
+            pin: Number(pin),
             backgroundImage,
             slots: this.setSlots(),
             postType: 'inspire'
@@ -194,6 +199,25 @@ export default class AddOrEditPostModal extends Component {
                                         id="backgroundImageURL"
                                         type="text" />
                                 </FormGroup>
+                                <FormGroup>
+                                    <Label for="pin">Pin</Label>
+                                    <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} id="pin">
+                                        <DropdownToggle caret>
+                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'} 
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            {
+                                                ['0', '1', '2', '3'].map(
+                                                (value, index) => 
+                                                <DropdownItem 
+                                                    active={value === this.state.pin}
+                                                    onClick={this.handlePin}
+                                                    key={index}>{value}
+                                                </DropdownItem>)
+                                            }
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                </FormGroup>
                                 <Row>
                                     { this.renderSlots() }
                                 </Row>
@@ -241,6 +265,7 @@ export default class AddOrEditPostModal extends Component {
         timeAgo: 0,
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
+        pin: '',
         backgroundImageURL: '',
         slot1Product: '',
         slot2Product: '',
@@ -260,7 +285,7 @@ export default class AddOrEditPostModal extends Component {
     handleBackgroundImage = (event) => this.setState({backgroundImageURL: event.target.value});
     handleTitle = (event) => this.setState({title: event.target.value});
     handleTimeAgo = (event) => this.setState({timeAgo: event.target.value});
-
+    handlePin = (event) => this.setState({pin: event.target.innerText})
 
     handleSlotProduct = (slot, value) => {
         (isNumber(value) || value === '') &&
@@ -270,4 +295,9 @@ export default class AddOrEditPostModal extends Component {
         (isNumber(value.replace(/\n/g,'')) || value === '') &&
             this.setState({[`slot${slot}Alts`]: value});
     }
+    toggleDropdown = () => {
+        this.setState(prevState => ({
+          dropdownOpen: !prevState.dropdownOpen
+        }));
+      }
 }

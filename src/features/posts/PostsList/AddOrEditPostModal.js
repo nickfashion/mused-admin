@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem  } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
 
 const theme = require('../theme.css');
@@ -33,6 +33,7 @@ export default class AddOrEditPostModal extends Component {
         timeAgo: 0,
         date: '',
         inspirationalImageURL: '',
+        pin: '',
         title: '',
         productIds: '',
         errorMsg: null
@@ -53,6 +54,7 @@ export default class AddOrEditPostModal extends Component {
                     date: postData.date || '',
                     authorProfilePhotoURL: postData.authorProfilePhoto || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
+                    pin: typeof postData.pin !== 'undefined' && postData.pin.toString() || '',
                     productIds
                 })
             } else {
@@ -67,18 +69,20 @@ export default class AddOrEditPostModal extends Component {
         const {
             title,
             authorName,
-            authorProfilePhoto,
-            inspirationalImage,
+            authorProfilePhotoURL,
+            inspirationalImageURL,
             timeAgo,
-            date
+            date,
+            pin
         } = this.state;
         const post = {
             title,
             authorName,
-            authorProfilePhoto,
-            inspirationalImage,
+            authorProfilePhoto: authorProfilePhotoURL,
+            inspirationalImage: inspirationalImageURL,
             productIds: this.setProductIds(this.state.productIds),
             date: this.type === types.add ? dateMinusHours(timeAgo) : date,
+            pin: Number(pin),
             postType: 'list'
         };
 
@@ -147,6 +151,25 @@ export default class AddOrEditPostModal extends Component {
                                         id="inspirationalImage"
                                         type="text" />
                                 </FormGroup>
+                                <FormGroup>
+                                    <Label for="pin">Pin</Label>
+                                    <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} id="pin">
+                                        <DropdownToggle caret>
+                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'} 
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            {
+                                                ['0', '1', '2', '3'].map(
+                                                (value, index) => 
+                                                <DropdownItem 
+                                                    active={value === this.state.pin}
+                                                    onClick={this.handlePin}
+                                                    key={index}>{value}
+                                                </DropdownItem>)
+                                            }
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                </FormGroup>
                                 <Row>
                                     { this.renderSlots() }
                                 </Row>
@@ -186,6 +209,7 @@ export default class AddOrEditPostModal extends Component {
         timeAgo: 0,
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
+        pin: '',
         productIds: ''
     });
 
@@ -194,10 +218,17 @@ export default class AddOrEditPostModal extends Component {
     handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
     handleTitle = (event) => this.setState({title: event.target.value});
     handleTimeAgo = (event) => this.setState({timeAgo: event.target.value});
+    handlePin = (event) => this.setState({pin: event.target.innerText})
 
     handleProductIds = (value) => {
         (isNumber(value.replace(/\n/g,'')) || value === '') &&
             this.setState({productIds: value});
     };
+
+    toggleDropdown = () => {
+        this.setState(prevState => ({
+          dropdownOpen: !prevState.dropdownOpen
+        }));
+      }
 
 }
