@@ -105,7 +105,7 @@ export default class AddOrEditPostModal extends Component {
         const post = {
             title,
             authorName,
-            date: this.type === types.add ? dateMinusHours(timeAgo) : date,
+            date: this.type === types.add ? new Date(dateMinusHours(timeAgo)) : date,
             authorProfilePhoto: authorProfilePhotoURL,
             inspirationalImage: inspirationalImageURL,
             pin: Number(pin),

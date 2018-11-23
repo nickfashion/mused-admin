@@ -72,14 +72,14 @@ export default class AddOrEditPostModal extends Component {
         const post = {
             title,
             authorName,
-            date: this.type === types.add ? dateMinusHours(timeAgo) : date,
+            date: this.type === types.add ? new Date(dateMinusHours(timeAgo)) : date,
             authorProfilePhoto: authorProfilePhotoURL,
             inspirationalImage: inspirationalImageURL,
             productId: Number(this.state.productId),
             pin: Number(pin),
             postType: 'product'
         };
-
+        debugger;
         this.type === types.edit ? setPostData({postId, ...post}) : addNewPost(post);
         onClose()
     };

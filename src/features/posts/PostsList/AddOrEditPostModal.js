@@ -81,11 +81,10 @@ export default class AddOrEditPostModal extends Component {
             authorProfilePhoto: authorProfilePhotoURL,
             inspirationalImage: inspirationalImageURL,
             productIds: this.setProductIds(this.state.productIds),
-            date: this.type === types.add ? dateMinusHours(timeAgo) : date,
+            date: this.type === types.add ? new Date(dateMinusHours(timeAgo)) : date,
             pin: Number(pin),
             postType: 'list'
         };
-
         this.type === types.edit ? setPostData({postId, ...post}) : addNewPost(post);
         onClose()
     };
