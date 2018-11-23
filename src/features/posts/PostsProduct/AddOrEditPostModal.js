@@ -79,7 +79,6 @@ export default class AddOrEditPostModal extends Component {
             pin: Number(pin),
             postType: 'product'
         };
-        debugger;
         this.type === types.edit ? setPostData({postId, ...post}) : addNewPost(post);
         onClose()
     };
