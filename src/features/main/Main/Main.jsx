@@ -3,11 +3,12 @@ import classNames from 'classnames';
 import {
     Container, Row, Col,
     TabContent, TabPane,
-    Nav, NavItem, NavLink } from 'reactstrap';
+    Nav, NavItem, NavLink
+} from 'reactstrap';
 import { ListBuilder } from "../../list-builder";
-import { PostsInspire, PostsList, PostsProduct } from "../../posts";
+import { PostsInspire, PostsList, PostsProduct, PostsInstagram } from "../../posts";
 import { AuthInfo } from "../../auth-info";
-import { PRODUCTS_TAB, POSTS_INSPIRE_TAB, POSTS_LIST_TAB, POSTS_PRODUCT_TAB } from '../constants';
+import { PRODUCTS_TAB, POSTS_INSPIRE_TAB, POSTS_LIST_TAB, POSTS_PRODUCT_TAB, POSTS_RETAILER_TAB, POSTS_INSTAGRAM_TAB } from '../constants';
 
 const tabList = [
     {
@@ -25,8 +26,16 @@ const tabList = [
     {
         name: POSTS_PRODUCT_TAB,
         text: 'Posts (Product)'
+    },
+    {
+        name: POSTS_RETAILER_TAB,
+        text: 'Posts (Retailer)'
+    },
+    {
+        name: POSTS_INSTAGRAM_TAB,
+        text: 'Posts (Instagram)'
     }
-]; 
+];
 
 export default class Main extends Component {
     state = {
@@ -41,14 +50,14 @@ export default class Main extends Component {
                     <AuthInfo />
                 </Row>
                 <Row key={"navigation"}>
-                    <Col  xs='12'>
+                    <Col xs='12'>
                         <Nav tabs>
                             {tabList.map(this.renderTab)}
                         </Nav>
                     </Col>
                 </Row>
                 <Row key={"tab-content"}>
-                    <Col  xs='12'>
+                    <Col xs='12'>
                         <TabContent activeTab={this.state.activeTab}>
                             <TabPane tabId="products">
                                 <ListBuilder />
@@ -61,6 +70,9 @@ export default class Main extends Component {
                             </TabPane>
                             <TabPane tabId="postsProduct">
                                 <PostsProduct />
+                            </TabPane>
+                            <TabPane tabId="postsInstagram">
+                                <PostsInstagram />
                             </TabPane>
                         </TabContent>
                     </Col>
@@ -81,9 +93,9 @@ export default class Main extends Component {
             <NavItem key={index}>
                 <NavLink
                     className={classNames({ active: this.state.activeTab === tabInfo.name })}
-                    onClick={() => { this.toggleTab( tabInfo.name); }}
+                    onClick={() => { this.toggleTab(tabInfo.name); }}
                 >
-                   {tabInfo.text}
+                    {tabInfo.text}
                 </NavLink>
             </NavItem>
         )

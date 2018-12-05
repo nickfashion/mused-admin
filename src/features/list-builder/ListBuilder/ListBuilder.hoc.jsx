@@ -4,7 +4,7 @@ import { ROOT_STORE } from "../../../stores";
 
 import ListBuilder from './ListBuilder';
 
-function CollectionHOC(ListBuilder) {
+function ListBuilderHOC(ListBuilder) {
     @inject(ROOT_STORE)
 
     @observer
@@ -37,4 +37,4 @@ function CollectionHOC(ListBuilder) {
     return NewComp;
 }
 
-export default CollectionHOC(ListBuilder);
+export default ListBuilderHOC(ListBuilder);

@@ -4,7 +4,7 @@ import { ROOT_STORE } from "../../../stores";
 
 import Posts from './Posts';
 
-function CollectionHOC(Posts) {
+function PostsHOC(Posts) {
     @inject(ROOT_STORE)
 
     @observer
@@ -53,4 +53,4 @@ function CollectionHOC(Posts) {
     return NewComp;
 }
 
-export default CollectionHOC(Posts);
+export default PostsHOC(Posts);

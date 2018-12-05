@@ -1,25 +1,31 @@
 import { observable, action } from 'mobx';
 import _ from 'lodash'
 import { getPostsByType, addPost, deletePostById, updatePost } from '../services';
-import { INSPIRE_POSTS, LIST_POSTS, PRODUCT_POSTS } from './constants';
+import { INSPIRE_POSTS, LIST_POSTS, PRODUCT_POSTS, INSTAGRAM_POSTS } from './constants';
 
 export default class ObservableStore {
-    constructor(root) {}
+    constructor(root) { }
 
     @observable postsInspire = [];
     @observable postsList = [];
     @observable postsProduct = [];
+    @observable postsInstagram = [];
 
-    get listOfPostsInspire () {
+
+    get listOfPostsInspire() {
         return this.postsInspire;
     }
 
-    get listOfPostsList () {
+    get listOfPostsList() {
         return this.postsList;
     }
 
-    get listOfPostsProduct () {
+    get listOfPostsProduct() {
         return this.postsProduct;
+    }
+
+    get listOfPostsInstagram() {
+        return this.postsInstagram;
     }
 
     @action
@@ -38,17 +44,22 @@ export default class ObservableStore {
     };
 
     @action
+    getInstagramPosts = async () => {
+        this.postsInstagram = await getPostsByType(INSTAGRAM_POSTS);
+    };
+
+    @action
     setPostData = async (post, postType) => {
         const updatedPost = await updatePost(post);
-        this.collectionUpdatePost({...updatedPost, postId: post.postId}, postType);
+        this.collectionUpdatePost({ ...updatedPost, postId: post.postId }, postType);
     };
 
     @action
     addNewPostInspire = async (post) => {
         try {
             await addPost(post);
-           await this.getInspirePosts();
-        } catch(error) {
+            await this.getInspirePosts();
+        } catch (error) {
             console.error(error)
         }
     };
@@ -57,8 +68,8 @@ export default class ObservableStore {
     addNewPostList = async (post) => {
         try {
             await addPost(post);
-           await this.getListPosts();
-        } catch(error) {
+            await this.getListPosts();
+        } catch (error) {
             console.error(error)
         }
     };
@@ -67,8 +78,18 @@ export default class ObservableStore {
     addNewPostProduct = async (post) => {
         try {
             await addPost(post);
-           await this.getProductPosts();
-        } catch(error) {
+            await this.getProductPosts();
+        } catch (error) {
+            console.error(error)
+        }
+    };
+
+    @action
+    addNewPostInstagram = async (post) => {
+        try {
+            await addPost(post);
+            await this.getInstagramPosts();
+        } catch (error) {
             console.error(error)
         }
     };
@@ -80,7 +101,7 @@ export default class ObservableStore {
             if (data.deletedCount) {
                 this.collectionDeletePost(postId, postType);
             }
-        } catch(error) {
+        } catch (error) {
             console.error(error)
         }
     };
@@ -91,13 +112,13 @@ export default class ObservableStore {
     };
 
     collectionUpdatePost = (post, postType) => {
-        const index = _.findIndex(this[postType], {postId: post.postId});
+        const index = _.findIndex(this[postType], { postId: post.postId });
         this[postType].splice(index, 1, post);
         this[postType] = [...this[postType]];
     };
 
     collectionDeletePost = (id, postType) => {
-        const index = _.findIndex(this[postType], {postId: id});
+        const index = _.findIndex(this[postType], { postId: id });
         this[postType].splice(index, 1);
         this[postType] = [...this[postType]];
     };

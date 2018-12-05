@@ -10,23 +10,23 @@ function PostsHOC(Posts) {
     @observer
     class NewComp extends Component {
 
-        postType = 'postsInspire';
+        postType = 'postsInstagram';
     
         componentDidMount() {
             const { root: { posts } } = this.props;
-            const { getInspirePosts } = posts;
-            getInspirePosts();
+            const { getInstagramPosts } = posts;
+            getInstagramPosts();
         }
 
         render() {
             const { root: { posts } } = this.props;
-            const { listOfPostsInspire, addNewPostInspire} = posts;
+            const { listOfPostsInstagram, addNewPostInstagram} = posts;
 
             return <Posts
-                posts={listOfPostsInspire}
+                posts={listOfPostsInstagram}
                 getPostData={this._getPostData}
                 setPostData={this._setPostData}
-                addNewPost={addNewPostInspire}
+                addNewPost={addNewPostInstagram}
                 deletePost={this._deletePost}
             />
         }
