@@ -28,9 +28,19 @@ export const getPostsByType = (type) => {
     return client.callFunction("getPostsByType", [type]);
 };
 
+export const getPostsRetailer = (type) => {
+    const client = getClient();
+    return client.callFunction("getPostsRetailer");
+}
+
 export const addPost = (post) => {
     const client = getClient();
     return client.callFunction("addPost", [ post ]);
+};
+
+export const addPostRetailer = (post) => {
+    const client = getClient();
+    return client.callFunction("addPostRetailer", [ post ]);
 };
 
 export const deletePostById = (postId) => {
@@ -38,7 +48,17 @@ export const deletePostById = (postId) => {
     return client.callFunction("deletePostById", [ postId ]);
 };
 
+export const deletePostRetailerById = (postId) => {
+    const client = getClient();
+    return client.callFunction("deletePostRetailerById", [ postId ]);
+};
+
 export const updatePost = (post) => {
     const client = getClient();
     return client.callFunction("updatePost", [ post ]);
+};
+
+export const updatePostRetailer = (post) => {
+    const client = getClient();
+    return client.callFunction("updatePostRetailer", [ post ]);
 };

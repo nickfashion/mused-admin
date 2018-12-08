@@ -20,3 +20,9 @@
 .instPostTitle {
   font-weight: bold;
 }
+
+.titleSize {
+  height: 38px;
+  margin: 0;
+  text-align: left;
+}

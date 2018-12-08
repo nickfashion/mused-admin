@@ -6,36 +6,9 @@ import {
     Nav, NavItem, NavLink
 } from 'reactstrap';
 import { ListBuilder } from "../../list-builder";
-import { PostsInspire, PostsList, PostsProduct, PostsInstagram } from "../../posts";
+import { PostsInspire, PostsList, PostsProduct, PostsInstagram, PostRetailer } from "../../posts";
 import { AuthInfo } from "../../auth-info";
-import { PRODUCTS_TAB, POSTS_INSPIRE_TAB, POSTS_LIST_TAB, POSTS_PRODUCT_TAB, POSTS_RETAILER_TAB, POSTS_INSTAGRAM_TAB } from '../constants';
-
-const tabList = [
-    {
-        name: PRODUCTS_TAB,
-        text: 'List of Products'
-    },
-    {
-        name: POSTS_INSPIRE_TAB,
-        text: 'Posts (Inspire)'
-    },
-    {
-        name: POSTS_LIST_TAB,
-        text: 'Posts (List)'
-    },
-    {
-        name: POSTS_PRODUCT_TAB,
-        text: 'Posts (Product)'
-    },
-    {
-        name: POSTS_RETAILER_TAB,
-        text: 'Posts (Retailer)'
-    },
-    {
-        name: POSTS_INSTAGRAM_TAB,
-        text: 'Posts (Instagram)'
-    }
-];
+import { PRODUCTS_TAB, POSTS_INSPIRE_TAB, POSTS_LIST_TAB, POSTS_PRODUCT_TAB, POSTS_RETAILER_TAB, POSTS_INSTAGRAM_TAB, tabList } from '../constants';
 
 export default class Main extends Component {
     state = {
@@ -59,19 +32,22 @@ export default class Main extends Component {
                 <Row key={"tab-content"}>
                     <Col xs='12'>
                         <TabContent activeTab={this.state.activeTab}>
-                            <TabPane tabId="products">
+                            <TabPane tabId={PRODUCTS_TAB}>
                                 <ListBuilder />
                             </TabPane>
-                            <TabPane tabId="postsInspire">
+                            <TabPane tabId={POSTS_INSPIRE_TAB}>
                                 <PostsInspire />
                             </TabPane>
-                            <TabPane tabId="postsList">
+                            <TabPane tabId={POSTS_LIST_TAB}>
                                 <PostsList />
                             </TabPane>
-                            <TabPane tabId="postsProduct">
+                            <TabPane tabId={POSTS_PRODUCT_TAB}>
                                 <PostsProduct />
                             </TabPane>
-                            <TabPane tabId="postsInstagram">
+                            <TabPane tabId={POSTS_RETAILER_TAB}>
+                                <PostRetailer />
+                            </TabPane>
+                            <TabPane tabId={POSTS_INSTAGRAM_TAB}>
                                 <PostsInstagram />
                             </TabPane>
                         </TabContent>
