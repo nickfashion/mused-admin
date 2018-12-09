@@ -44,3 +44,27 @@
  margin-left: 4px;
  padding: 0 4px;
 }
+
+.input{
+    background-color: #6c757d;
+    border-color: #6c757d;
+    margin-top: 15px;
+   }
+
+.input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: #fff;
+    text-align: center;
+  }
+
+.input::-moz-placeholder { /* Firefox 19+ */
+    color: #fff;
+    text-align: center;
+  }
+.input:-ms-input-placeholder { /* IE 10+ */
+    color: #fff;
+    text-align: center;
+  }
+.input:-moz-placeholder { /* Firefox 18- */
+    color: #fff;
+    text-align: center;
+  }

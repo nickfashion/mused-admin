@@ -10,5 +10,7 @@ export const dateMinusHours = (timeAgo) =>
 
 export const cutString = (word) => {
     const maxLength = 50;
-    return word.substring(0, maxLength) + '...';
+    return word.lenght > maxLength
+        ? word.substring(0, maxLength) + '...'
+        : word;
 }

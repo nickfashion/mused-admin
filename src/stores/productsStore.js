@@ -2,34 +2,38 @@ import { observable, action, computed } from 'mobx';
 import _ from 'lodash'
 
 import { getAllProducts } from '../services';
-import { unusedCategories } from './constants';
+import { unusedCategories, COLORS } from './constants';
 
 const CHUNK_SIZE = 100;
 
 export default class ObservableStore {
-    constructor(root) {}
+    constructor(root) { }
 
     allProducts = [];
     @observable products = [];
     @observable categories = [];
-    // @observable category = null;
     @observable pagination = 0;
     @observable selectedIds = [];
+    @observable colors = COLORS;
 
-    @computed get listOfProducts (){
+    @computed get listOfProducts() {
         return this.products.slice(
-            this.pagination*CHUNK_SIZE,
-            (this.pagination+1)*CHUNK_SIZE);
+            this.pagination * CHUNK_SIZE,
+            (this.pagination + 1) * CHUNK_SIZE);
     }
-    @computed get paginationLength (){
+    @computed get paginationLength() {
         return parseInt(this.products.length / CHUNK_SIZE);
     }
-    get allCategories (){
+    get allCategories() {
         return this.categories;
     }
-    get listOfIds (){
+    get allColors() {
+        return this.colors;
+    }
+    get listOfIds() {
         return this.selectedIds;
     }
+
 
     @action
     paginate = (n) => {
@@ -40,26 +44,38 @@ export default class ObservableStore {
         return this.pagination;
     };
     incPaginate = () => {
-        const maxSize =  this.allProducts.length / CHUNK_SIZE;
+        const maxSize = this.allProducts.length / CHUNK_SIZE;
         return this.pagination === maxSize ? 0 : this.pagination += 1;
     };
     decrPaginate = () => {
         return this.pagination === 0 ? 0 : this.pagination -= 1;
     };
 
-    filterProductsByCategory = (category) => {
-        const products = category
+    filterProductsByParams = (category, color, searchQuery) => {
+        let filteredProducts = category
             ? this.allProducts.filter(product => product.category === category)
             : this.allProducts;
-
-        this.products = products;
+        filteredProducts = color
+            ? filteredProducts.filter(product => product.colors.includes(color))
+            : filteredProducts;
+        filteredProducts = searchQuery
+            ? filteredProducts.filter(product => product.description.toLowerCase().includes(searchQuery.toLowerCase()))
+            : filteredProducts;
+        this.products = filteredProducts;
     };
 
+    filterProductsBySearchQuery = (searchQuery) => {
+        let filteredProducts = searchQuery
+            ? this.products.filter(product => product.description.toLowerCase().includes(searchQuery.toLowerCase()))
+            : this.products;
+        this.products = filteredProducts;
+    }
+
+
     @action
-    setCategory = (category) => {
-        // this.category = category;
+    setFilterParams = (category, color, searchQuery) => {
         this.pagination = 0;
-        this.filterProductsByCategory(category);
+        this.filterProductsByParams(category, color, searchQuery);
     };
 
     @action
@@ -78,12 +94,12 @@ export default class ObservableStore {
     @action
     getAllProducts = async () => {
         // this.allProducts = await getAllProducts();
-        await getAllProducts().then( products => {
+        await getAllProducts().then(products => {
             this.allProducts = products;
             this.products = products;
-        this.categories = this.getCategories();
+            this.categories = this.getCategories();
         })
-        
+
     };
 
     getCategories = () => {

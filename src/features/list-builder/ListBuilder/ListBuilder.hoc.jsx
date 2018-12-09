@@ -19,17 +19,18 @@ function ListBuilderHOC(ListBuilder) {
         render() {
             const { root: { products } } = this.props;
             const {
-                    listOfProducts, allCategories, listOfIds,
-                    setCategory, addIdToList, removeIdFromList
-                } = products;
+                listOfProducts, allCategories, listOfIds,
+                setFilterParams, addIdToList, removeIdFromList, allColors
+            } = products;
 
             return <ListBuilder
                 products={listOfProducts}
                 categories={allCategories}
+                colors={allColors}
                 addIdToList={addIdToList}
                 removeIdFromList={removeIdFromList}
                 listOfIds={listOfIds}
-                setCategory={setCategory}
+                setFilterParams={setFilterParams}
             />
         }
 

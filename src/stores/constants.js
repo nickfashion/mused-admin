@@ -16,3 +16,8 @@ export const PRODUCT_POSTS = 'product';
 export const INSTAGRAM_POSTS = 'instagram';
 export const RETAILER_POSTS = 'retailer';
 
+export const COLORS = [
+    'Black',
+    'Green'
+]
+
