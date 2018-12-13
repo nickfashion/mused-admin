@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem  } from 'reactstrap';
+import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
 
 const theme = require('../theme.css');
@@ -42,10 +42,8 @@ export default class AddOrEditPostModal extends Component {
     componentDidUpdate(prevProps) {
         if (this.props.isOpen !== prevProps.isOpen && this.props.isOpen === true) {
             const { postId, getPostData } = this.props;
-
             if (postId) {
                 const postData = getPostData(postId);
-
                 this.type = types.edit;
                 const productIds = getProductIds(postData.productIds);
                 this.setState({
@@ -59,13 +57,12 @@ export default class AddOrEditPostModal extends Component {
                 })
             } else {
                 this.type = types.add;
-                this.clearForm();
             }
         }
     }
 
     savePost = () => {
-        const { onClose, setPostData, addNewPost, postId } = this.props;
+        const { setPostData, addNewPost, postId } = this.props;
         const {
             title,
             authorName,
@@ -85,8 +82,9 @@ export default class AddOrEditPostModal extends Component {
             pin: Number(pin),
             postType: 'list'
         };
-        this.type === types.edit ? setPostData({postId, ...post}) : addNewPost(post);
-        onClose()
+        this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
+        this.onCloseForm();
+
     };
 
     setProductIds = (productIds) => {
@@ -96,12 +94,12 @@ export default class AddOrEditPostModal extends Component {
     };
 
     render() {
-        const { isOpen, onClose } = this.props;
+        const { isOpen } = this.props;
         const type = this.type;
 
         return (
             <Modal isOpen={isOpen} >
-                <ModalHeader>{ title[type] }</ModalHeader>
+                <ModalHeader>{title[type]}</ModalHeader>
                 <ModalBody>
                     <Row>
                         <Col xs="12">
@@ -154,53 +152,53 @@ export default class AddOrEditPostModal extends Component {
                                     <Label for="pin">Pin</Label>
                                     <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} id="pin">
                                         <DropdownToggle caret>
-                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'} 
+                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'}
                                         </DropdownToggle>
                                         <DropdownMenu>
                                             {
                                                 ['0', '1', '2', '3'].map(
-                                                (value, index) => 
-                                                <DropdownItem 
-                                                    active={value === this.state.pin}
-                                                    onClick={this.handlePin}
-                                                    key={index}>{value}
-                                                </DropdownItem>)
+                                                    (value, index) =>
+                                                        <DropdownItem
+                                                            active={value === this.state.pin}
+                                                            onClick={this.handlePin}
+                                                            key={index}>{value}
+                                                        </DropdownItem>)
                                             }
                                         </DropdownMenu>
                                     </Dropdown>
                                 </FormGroup>
                                 <Row>
-                                    { this.renderSlots() }
+                                    {this.renderSlots()}
                                 </Row>
-                                { this.state.errorMsg && <Alert color="danger">
-                                    { this.state.errorMsg }
-                                </Alert> }
+                                {this.state.errorMsg && <Alert color="danger">
+                                    {this.state.errorMsg}
+                                </Alert>}
                             </Form>
                         </Col>
                     </Row>
                 </ModalBody>
                 <ModalFooter>
-                    <Button outline color="primary" onClick={this.savePost}>{ submitText[type] }</Button>{' '}
-                    <Button outline color="secondary" onClick={onClose}>Cancel</Button>
+                    <Button outline color="primary" onClick={this.savePost}>{submitText[type]}</Button>{' '}
+                    <Button outline color="secondary" onClick={this.onCloseForm}>Cancel</Button>
                 </ModalFooter>
             </Modal>
         )
     }
 
     renderSlots = () =>
-            (
-                <Col style={{maxWidth: '20%'}}>
-                    <FormGroup>
-                        <Label for={'productIds'}>Product Ids</Label>
-                        <Input
-                            value={this.state.productIds}
-                            onChange={(event) => this.handleProductIds(event.target.value)}
-                            id={'productIds'}
-                            type="textarea"
-                            rows="8" />
-                    </FormGroup>
-                </Col>
-            );
+        (
+            <Col style={{ maxWidth: '20%' }}>
+                <FormGroup>
+                    <Label for={'productIds'}>Product Ids</Label>
+                    <Input
+                        value={this.state.productIds}
+                        onChange={(event) => this.handleProductIds(event.target.value)}
+                        id={'productIds'}
+                        type="textarea"
+                        rows="8" />
+                </FormGroup>
+            </Col>
+        );
 
     clearForm = () => this.setState({
         title: '',
@@ -212,22 +210,25 @@ export default class AddOrEditPostModal extends Component {
         productIds: ''
     });
 
-    handleAuthorNameChange = (event) => this.setState({authorName: event.target.value});
-    handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
-    handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
-    handleTitle = (event) => this.setState({title: event.target.value});
-    handleTimeAgo = (event) => this.setState({timeAgo: event.target.value});
-    handlePin = (event) => this.setState({pin: event.target.innerText})
+    handleAuthorNameChange = (event) => this.setState({ authorName: event.target.value });
+    handleAuthorProfilePhoto = (event) => this.setState({ authorProfilePhotoURL: event.target.value });
+    handleInspirationalImage = (event) => this.setState({ inspirationalImageURL: event.target.value });
+    handleTitle = (event) => this.setState({ title: event.target.value });
+    handleTimeAgo = (event) => this.setState({ timeAgo: event.target.value });
+    handlePin = (event) => this.setState({ pin: event.target.innerText })
 
     handleProductIds = (value) => {
-        (isNumber(value.replace(/\n/g,'')) || value === '') &&
-            this.setState({productIds: value});
+        (isNumber(value.replace(/\n/g, '')) || value === '') &&
+            this.setState({ productIds: value });
     };
 
     toggleDropdown = () => {
         this.setState(prevState => ({
-          dropdownOpen: !prevState.dropdownOpen
+            dropdownOpen: !prevState.dropdownOpen
         }));
-      }
-
+    }
+    onCloseForm = () => {
+        this.props.onClose();
+        this.clearForm();
+    }
 }

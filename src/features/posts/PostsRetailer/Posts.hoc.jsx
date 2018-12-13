@@ -19,8 +19,9 @@ function PostsHOC(Posts) {
         }
 
         render() {
-            const { root: { posts } } = this.props;
+            const { root: { posts, products } } = this.props;
             const { listOfPostsRetailer, addNewPostRetailer} = posts;
+            const { listOfCategories, getProductsIdsByCategory, getCategoryByProductId } = products;
 
             return <Posts
                 posts={listOfPostsRetailer}
@@ -28,6 +29,9 @@ function PostsHOC(Posts) {
                 setPostData={this._setPostData}
                 addNewPost={addNewPostRetailer}
                 deletePost={this._deletePost}
+                categories={listOfCategories}
+                getProductsIdsByCategory={getProductsIdsByCategory}
+                getCategoryByProductId={getCategoryByProductId}
             />
         }
 

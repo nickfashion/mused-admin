@@ -9,6 +9,7 @@ import { ListBuilder } from "../../list-builder";
 import { PostsInspire, PostsList, PostsProduct, PostsInstagram, PostRetailer } from "../../posts";
 import { AuthInfo } from "../../auth-info";
 import { PRODUCTS_TAB, POSTS_INSPIRE_TAB, POSTS_LIST_TAB, POSTS_PRODUCT_TAB, POSTS_RETAILER_TAB, POSTS_INSTAGRAM_TAB, tabList } from '../constants';
+const theme = require('./theme.css');
 
 export default class Main extends Component {
     state = {
@@ -16,7 +17,14 @@ export default class Main extends Component {
     };
 
     render() {
-
+        const { products } = this.props;
+        if (!products.length) {
+            return <Container>
+                <div className={theme.loadingContainer}>
+                    <p>Loading ...</p>
+                </div>
+            </Container>
+        };
         return (
             <Container>
                 <Row key={"header"}>

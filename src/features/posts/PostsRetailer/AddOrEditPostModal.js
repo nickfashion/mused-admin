@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
+import { Dropdown } from '../../shared';
 
 const theme = require('../theme.css');
 
@@ -23,16 +24,6 @@ const SLOTS = [
     1, 2, 3, 4, 5
 ];
 
-const getSlots = slots => {
-    const s1 = {};
-    if (!slots) return s1;
-    slots.forEach((slot, i) => {
-        s1[`slot${i + 1}Product`] = slot.productId;
-        s1[`slot${i + 1}Alts`] = slot.alternatives.join('\n');
-    });
-
-    return s1;
-};
 
 export default class AddOrEditPostModal extends Component {
     type = types.add;
@@ -48,11 +39,17 @@ export default class AddOrEditPostModal extends Component {
         slot4Product: '',
         slot5Product: '',
 
-        slot1Alts: '',
-        slot2Alts: '',
-        slot3Alts: '',
-        slot4Alts: '',
-        slot5Alts: '',
+        category1: '',
+        category2: '',
+        category3: '',
+        category4: '',
+        category5: '',
+
+        count1Alts: '',
+        count2Alts: '',
+        count3Alts: '',
+        count4Alts: '',
+        count5Alts: '',
 
         errorMsg: null
     };
@@ -63,9 +60,8 @@ export default class AddOrEditPostModal extends Component {
 
             if (postId) {
                 const postData = getPostData(postId);
-
                 this.type = types.edit;
-                const slots = getSlots(postData.slots);
+                const slots = this.getSlots(postData.slots);
                 this.setState({
                     title: postData.title || '',
                     date: postData.date || '',
@@ -74,13 +70,25 @@ export default class AddOrEditPostModal extends Component {
                 })
             } else {
                 this.type = types.add;
-                this.clearForm();
             }
         }
     }
 
+    getSlots = slots => {
+        const s1 = {};
+        if (!slots) return s1;
+        slots.forEach((slot, i) => {
+            s1[`slot${i + 1}Product`] = slot.productId;
+            // make sure that slot.alternatives[0] exist
+            s1[`category${i + 1}`] = this.props.getCategoryByProductId(slot.alternatives[0]);
+            s1[`count${i + 1}Alts`] = slot.alternatives.length;
+        });
+
+        return s1;
+    };
+
     savePost = () => {
-        const { onClose, setPostData, addNewPost, postId } = this.props;
+        const { setPostData, addNewPost, postId } = this.props;
         const {
             title,
             inspirationalImageURL,
@@ -95,14 +103,14 @@ export default class AddOrEditPostModal extends Component {
         };
 
         this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
-        onClose()
+        this.onCloseForm();
     };
 
     setSlots = () => {
         return SLOTS.map((slot, i) => {
             const productId = this.state[`slot${i + 1}Product`];
             if (!productId) return null;
-            const alts = this.getAlternatives(this.state[`slot${i + 1}Alts`]);
+            const alts = this.getAlternatives(i);
             return {
                 productId: +productId,
                 alternatives: alts,
@@ -110,14 +118,15 @@ export default class AddOrEditPostModal extends Component {
         }).filter(Boolean);
     };
 
-    getAlternatives = (alternatives) => {
-        return alternatives ?
-            alternatives.split('\n').filter(Boolean).map(id => +id) :
-            []
+    getAlternatives = (slotNumber) => {
+        const { getProductsIdsByCategory, categories } = this.props;
+        const countAlts = this.state[`count${slotNumber + 1}Alts`];
+        const category = this.state[`category${slotNumber + 1}`] || categories[0];
+        return getProductsIdsByCategory(category, countAlts);
     };
 
     render() {
-        const { isOpen, onClose } = this.props;
+        const { isOpen } = this.props;
         const type = this.type;
 
         return (
@@ -167,7 +176,7 @@ export default class AddOrEditPostModal extends Component {
                 </ModalBody>
                 <ModalFooter>
                     <Button outline color="primary" onClick={this.savePost}>{submitText[type]}</Button>{' '}
-                    <Button outline color="secondary" onClick={onClose}>Cancel</Button>
+                    <Button outline color="secondary" onClick={this.onCloseForm}>Cancel</Button>
                 </ModalFooter>
             </Modal>
         )
@@ -184,13 +193,17 @@ export default class AddOrEditPostModal extends Component {
                             onChange={(event) => this.handleSlotProduct(slot, event.target.value)}
                             id={`slot${slot}`}
                             type="text" />
-                        <Label for={`slot${slot}Alts`}>{`Slot #${slot} Alternatives`}</Label>
+                        <Label>{`Slot #${slot} Alternatives`}</Label>
+                        <Dropdown
+                            currentValue={this.state[`category${slot}`] || 'Category'}
+                            changeItem={(event) => this.handleCat(slot, event)}
+                            valuesList={this.props.categories} />
+                        <Label for={`count${slot}Alts`}>{`Number of alternatives`}</Label>
                         <Input
-                            value={this.state[`slot${slot}Alts`]}
-                            onChange={(event) => this.handleSlotAlts(slot, event.target.value)}
-                            id={`slot${slot}Alts`}
-                            type="textarea"
-                            rows="8" />
+                            value={this.state[`count${slot}Alts`]}
+                            onChange={(event) => this.handleCountAlts(slot, event)}
+                            id={`count${slot}Alts`}
+                            type="text" />
                     </FormGroup>
                 </Col>
             )
@@ -200,28 +213,42 @@ export default class AddOrEditPostModal extends Component {
         title: '',
         timeAgo: 0,
         inspirationalImageURL: '',
+
         slot1Product: '',
         slot2Product: '',
         slot3Product: '',
         slot4Product: '',
         slot5Product: '',
-        slot1Alts: '',
-        slot2Alts: '',
-        slot3Alts: '',
-        slot4Alts: '',
-        slot5Alts: '',
+
+        category1: '',
+        category2: '',
+        category3: '',
+        category4: '',
+        category5: '',
+
+        count1Alts: '',
+        count2Alts: '',
+        count3Alts: '',
+        count4Alts: '',
+        count5Alts: '',
     });
 
     handleInspirationalImage = (event) => this.setState({ inspirationalImageURL: event.target.value });
     handleTitle = (event) => this.setState({ title: event.target.value });
     handleTimeAgo = (event) => this.setState({ timeAgo: event.target.value });
-
+    handleCat = (slot, event) => this.setState({ [`category${slot}`]: event.target.innerText })
+    handleCountAlts = (slot, event) => {
+        if (!(isNumber(event.target.value ) || event.target.value === '')) {
+            return;
+        }
+        this.setState({ [`count${slot}Alts`]: event.target.value })
+    };
     handleSlotProduct = (slot, value) => {
         (isNumber(value) || value === '') &&
             this.setState({ [`slot${slot}Product`]: value });
     };
-    handleSlotAlts = (slot, value) => {
-        (isNumber(value.replace(/\n/g, '')) || value === '') &&
-            this.setState({ [`slot${slot}Alts`]: value });
+    onCloseForm = () => {
+        this.props.onClose();
+        this.clearForm();
     }
 }

@@ -9,13 +9,6 @@ function ListBuilderHOC(ListBuilder) {
 
     @observer
     class NewComp extends Component {
-        componentDidMount() {
-            const { root: { products } } = this.props;
-            const { getAllProducts } = products;
-
-            getAllProducts();
-        }
-
         render() {
             const { root: { products } } = this.props;
             const {

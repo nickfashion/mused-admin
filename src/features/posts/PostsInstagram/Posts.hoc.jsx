@@ -11,7 +11,7 @@ function PostsHOC(Posts) {
     class NewComp extends Component {
 
         postType = 'postsInstagram';
-    
+
         componentDidMount() {
             const { root: { posts } } = this.props;
             const { getInstagramPosts } = posts;
@@ -19,8 +19,10 @@ function PostsHOC(Posts) {
         }
 
         render() {
-            const { root: { posts } } = this.props;
-            const { listOfPostsInstagram, addNewPostInstagram} = posts;
+            const { root: { posts, products } } = this.props;
+            const { listOfPostsInstagram, addNewPostInstagram } = posts;
+            const { listOfCategories, getProductsIdsByCategory, getCategoryByProductId } = products;
+
 
             return <Posts
                 posts={listOfPostsInstagram}
@@ -28,25 +30,28 @@ function PostsHOC(Posts) {
                 setPostData={this._setPostData}
                 addNewPost={addNewPostInstagram}
                 deletePost={this._deletePost}
+                categories={listOfCategories}
+                getProductsIdsByCategory={getProductsIdsByCategory}
+                getCategoryByProductId={getCategoryByProductId}
             />
         }
 
 
         _deletePost = (id) => {
             const { root: { posts } } = this.props;
-            const {  deletePost } = posts;
+            const { deletePost } = posts;
             deletePost(id, this.postType);
         }
 
         _getPostData = (id) => {
             const { root: { posts } } = this.props;
-            const {  getPostData } = posts;
+            const { getPostData } = posts;
             return getPostData(id, this.postType);
         }
 
         _setPostData = (post) => {
             const { root: { posts } } = this.props;
-            const {  setPostData } = posts;
+            const { setPostData } = posts;
             return setPostData(post, this.postType);
         }
 

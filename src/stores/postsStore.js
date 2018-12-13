@@ -67,7 +67,6 @@ export default class ObservableStore {
         const updatedPost = postType === 'postsRetailer'
             ? await updatePostRetailer(post)
             : await updatePost(post);
-        await updatePost(post);
         this.collectionUpdatePost({ ...updatedPost, postId: post.postId }, postType);
     };
 

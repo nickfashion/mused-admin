@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter,  Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
 
 const theme = require('../theme.css');
@@ -40,7 +40,6 @@ export default class AddOrEditPostModal extends Component {
 
             if (postId) {
                 const postData = getPostData(postId);
-
                 this.type = types.edit;
                 this.setState({
                     title: postData.title || '',
@@ -53,13 +52,12 @@ export default class AddOrEditPostModal extends Component {
                 })
             } else {
                 this.type = types.add;
-                this.clearForm();
             }
         }
     }
 
     savePost = () => {
-        const { onClose, setPostData, addNewPost, postId } = this.props;
+        const { setPostData, addNewPost, postId } = this.props;
         const {
             title,
             authorName,
@@ -79,17 +77,17 @@ export default class AddOrEditPostModal extends Component {
             pin: Number(pin),
             postType: 'product'
         };
-        this.type === types.edit ? setPostData({postId, ...post}) : addNewPost(post);
-        onClose()
+        this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
+        this.onCloseForm();
     };
 
     render() {
-        const { isOpen, onClose } = this.props;
+        const { isOpen } = this.props;
         const type = this.type;
 
         return (
             <Modal isOpen={isOpen} >
-                <ModalHeader>{ title[type] }</ModalHeader>
+                <ModalHeader>{title[type]}</ModalHeader>
                 <ModalBody>
                     <Row>
                         <Col xs="12">
@@ -142,17 +140,17 @@ export default class AddOrEditPostModal extends Component {
                                     <Label for="pin">Pin</Label>
                                     <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} id="pin">
                                         <DropdownToggle caret>
-                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'} 
+                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'}
                                         </DropdownToggle>
                                         <DropdownMenu>
                                             {
                                                 ['0', '1', '2', '3'].map(
-                                                (value, index) => 
-                                                <DropdownItem 
-                                                    active={value === this.state.pin}
-                                                    onClick={this.handlePin}
-                                                    key={index}>{value}
-                                                </DropdownItem>)
+                                                    (value, index) =>
+                                                        <DropdownItem
+                                                            active={value === this.state.pin}
+                                                            onClick={this.handlePin}
+                                                            key={index}>{value}
+                                                        </DropdownItem>)
                                             }
                                         </DropdownMenu>
                                     </Dropdown>
@@ -165,16 +163,16 @@ export default class AddOrEditPostModal extends Component {
                                         id={'productId'}
                                         type="text" />
                                 </FormGroup>
-                                { this.state.errorMsg && <Alert color="danger">
-                                    { this.state.errorMsg }
-                                </Alert> }
+                                {this.state.errorMsg && <Alert color="danger">
+                                    {this.state.errorMsg}
+                                </Alert>}
                             </Form>
                         </Col>
                     </Row>
                 </ModalBody>
                 <ModalFooter>
-                    <Button outline color="primary" onClick={this.savePost}>{ submitText[type] }</Button>{' '}
-                    <Button outline color="secondary" onClick={onClose}>Cancel</Button>
+                    <Button outline color="primary" onClick={this.savePost}>{submitText[type]}</Button>{' '}
+                    <Button outline color="secondary" onClick={this.onCloseForm}>Cancel</Button>
                 </ModalFooter>
             </Modal>
         )
@@ -191,24 +189,28 @@ export default class AddOrEditPostModal extends Component {
         productId: ''
     });
 
-    handleAuthorNameChange = (event) => this.setState({authorName: event.target.value});
-    handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
-    handleTitle = (event) => this.setState({title: event.target.value});
-    handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
-    handleTimeAgo = (event) => this.setState({timeAgo: event.target.value});
-    handlePin = (event) => this.setState({pin: event.target.innerText})
+    handleAuthorNameChange = (event) => this.setState({ authorName: event.target.value });
+    handleAuthorProfilePhoto = (event) => this.setState({ authorProfilePhotoURL: event.target.value });
+    handleTitle = (event) => this.setState({ title: event.target.value });
+    handleInspirationalImage = (event) => this.setState({ inspirationalImageURL: event.target.value });
+    handleTimeAgo = (event) => this.setState({ timeAgo: event.target.value });
+    handlePin = (event) => this.setState({ pin: event.target.innerText })
 
 
 
     handleProductId = (value) => {
         (isNumber(value) || value === '') &&
-            this.setState({productId: value});
+            this.setState({ productId: value });
     };
 
     toggleDropdown = () => {
         this.setState(prevState => ({
-          dropdownOpen: !prevState.dropdownOpen
+            dropdownOpen: !prevState.dropdownOpen
         }));
-      }
+    }
+    onCloseForm = () => {
+        this.props.onClose();
+        this.clearForm();
+    }
 
 }

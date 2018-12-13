@@ -30,28 +30,28 @@ export default class Posts extends Component {
     };
 
     cancel = () => {
-        this.setState({isModalShown: false})
+        this.setState({ isModalShown: false })
     };
 
     render() {
-        const { posts, getPostData, setPostData, addNewPost } = this.props;
+        const { posts, getPostData, setPostData, addNewPost, categories, getProductsIdsByCategory, getCategoryByProductId } = this.props;
 
         return (
             <div className={theme.listWrapper}>
                 <h3>Posts:</h3>
                 <Button outline color="secondary"
-                        onClick={this.addNewPost}>
+                    onClick={this.addNewPost}>
                     {'Add New Post'}
                 </Button>
                 <ListGroup>
-                    { posts.map((post, i) => (
+                    {posts.map((post, i) => (
                         <ListGroupItem key={i}>
                             <PostItem
                                 editPost={this.editPost}
                                 deletePost={this.deletePost}
                                 post={post} />
                         </ListGroupItem>
-                    )) }
+                    ))}
                 </ListGroup>
 
                 <AddOrEditPostModal
@@ -61,6 +61,9 @@ export default class Posts extends Component {
                     getPostData={getPostData}
                     setPostData={setPostData}
                     addNewPost={addNewPost}
+                    categories={categories}
+                    getProductsIdsByCategory={getProductsIdsByCategory}
+                    getCategoryByProductId={getCategoryByProductId}
                 />
             </div>
         )

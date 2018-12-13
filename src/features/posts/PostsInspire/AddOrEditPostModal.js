@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
+import { Dropdown } from '../../shared'
 
 const theme = require('../theme.css');
 
@@ -59,18 +60,14 @@ export default class AddOrEditPostModal extends Component {
         slot4Alts: '',
         slot5Alts: '',
 
-        dropdownOpen: false,
-
         errorMsg: null
     };
 
     componentDidUpdate(prevProps) {
         if (this.props.isOpen !== prevProps.isOpen && this.props.isOpen === true) {
             const { postId, getPostData } = this.props;
-
             if (postId) {
                 const postData = getPostData(postId);
-
                 this.type = types.edit;
                 const slots = getSlots(postData.slots);
                 this.setState({
@@ -85,20 +82,19 @@ export default class AddOrEditPostModal extends Component {
                 })
             } else {
                 this.type = types.add;
-                this.clearForm();
             }
         }
     }
 
     savePost = () => {
-        const { onClose, setPostData, addNewPost, postId } = this.props;
+        const { setPostData, addNewPost, postId } = this.props;
         const {
             title,
             authorName,
             backgroundImage,
             authorProfilePhotoURL,
             inspirationalImageURL,
-            pin, 
+            pin,
             timeAgo,
             date
         } = this.state;
@@ -114,8 +110,8 @@ export default class AddOrEditPostModal extends Component {
             postType: 'inspire'
         };
 
-        this.type === types.edit ? setPostData({postId, ...post}) : addNewPost(post);
-        onClose()
+        this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
+       this.onCloseForm();
     };
 
     setSlots = () => {
@@ -137,12 +133,12 @@ export default class AddOrEditPostModal extends Component {
     };
 
     render() {
-        const { isOpen, onClose } = this.props;
+        const { isOpen } = this.props;
         const type = this.type;
 
         return (
             <Modal isOpen={isOpen} >
-                <ModalHeader>{ title[type] }</ModalHeader>
+                <ModalHeader>{title[type]}</ModalHeader>
                 <ModalBody>
                     <Row>
                         <Col xs="12">
@@ -200,37 +196,26 @@ export default class AddOrEditPostModal extends Component {
                                         type="text" />
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="pin">Pin</Label>
-                                    <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} id="pin">
-                                        <DropdownToggle caret>
-                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'} 
-                                        </DropdownToggle>
-                                        <DropdownMenu>
-                                            {
-                                                ['0', '1', '2', '3'].map(
-                                                (value, index) => 
-                                                <DropdownItem 
-                                                    active={value === this.state.pin}
-                                                    onClick={this.handlePin}
-                                                    key={index}>{value}
-                                                </DropdownItem>)
-                                            }
-                                        </DropdownMenu>
-                                    </Dropdown>
+                                    <Label>Pin</Label>
+                                    <Dropdown
+                                        currentValue={Boolean(this.state.pin) && this.state.pin || 'Select Pin'}
+                                        valuesList={['0', '1', '2', '3']}
+                                        changeItem={this.handlePin}
+                                    />
                                 </FormGroup>
                                 <Row>
-                                    { this.renderSlots() }
+                                    {this.renderSlots()}
                                 </Row>
-                                { this.state.errorMsg && <Alert color="danger">
-                                    { this.state.errorMsg }
-                                </Alert> }
+                                {this.state.errorMsg && <Alert color="danger">
+                                    {this.state.errorMsg}
+                                </Alert>}
                             </Form>
                         </Col>
                     </Row>
                 </ModalBody>
                 <ModalFooter>
-                    <Button outline color="primary" onClick={this.savePost}>{ submitText[type] }</Button>{' '}
-                    <Button outline color="secondary" onClick={onClose}>Cancel</Button>
+                    <Button outline color="primary" onClick={this.savePost}>{submitText[type]}</Button>{' '}
+                    <Button outline color="secondary" onClick={this.onCloseForm}>Cancel</Button>
                 </ModalFooter>
             </Modal>
         )
@@ -239,7 +224,7 @@ export default class AddOrEditPostModal extends Component {
     renderSlots = () =>
         SLOTS.map((slot, i) => {
             return (
-                <Col style={{width: '20%'}} key={i}>
+                <Col style={{ width: '20%' }} key={i}>
                     <FormGroup>
                         <Label for={`slot${slot}`}>{`Slot #${slot} Product Id`}</Label>
                         <Input
@@ -279,25 +264,24 @@ export default class AddOrEditPostModal extends Component {
         slot5Alts: '',
     });
 
-    handleAuthorNameChange = (event) => this.setState({authorName: event.target.value});
-    handleAuthorProfilePhoto = (event) => this.setState({authorProfilePhotoURL: event.target.value});
-    handleInspirationalImage = (event) => this.setState({inspirationalImageURL: event.target.value});
-    handleBackgroundImage = (event) => this.setState({backgroundImageURL: event.target.value});
-    handleTitle = (event) => this.setState({title: event.target.value});
-    handleTimeAgo = (event) => this.setState({timeAgo: event.target.value});
-    handlePin = (event) => this.setState({pin: event.target.innerText})
+    handleAuthorNameChange = (event) => this.setState({ authorName: event.target.value });
+    handleAuthorProfilePhoto = (event) => this.setState({ authorProfilePhotoURL: event.target.value });
+    handleInspirationalImage = (event) => this.setState({ inspirationalImageURL: event.target.value });
+    handleBackgroundImage = (event) => this.setState({ backgroundImageURL: event.target.value });
+    handleTitle = (event) => this.setState({ title: event.target.value });
+    handleTimeAgo = (event) => this.setState({ timeAgo: event.target.value });
+    handlePin = (event) => this.setState({ pin: event.target.innerText })
 
     handleSlotProduct = (slot, value) => {
         (isNumber(value) || value === '') &&
-            this.setState({[`slot${slot}Product`]: value});
+            this.setState({ [`slot${slot}Product`]: value });
     };
     handleSlotAlts = (slot, value) => {
-        (isNumber(value.replace(/\n/g,'')) || value === '') &&
-            this.setState({[`slot${slot}Alts`]: value});
+        (isNumber(value.replace(/\n/g, '')) || value === '') &&
+            this.setState({ [`slot${slot}Alts`]: value });
     }
-    toggleDropdown = () => {
-        this.setState(prevState => ({
-          dropdownOpen: !prevState.dropdownOpen
-        }));
-      }
+    onCloseForm = () => {
+        this.props.onClose();
+        this.clearForm();
+    }
 }

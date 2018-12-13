@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
-import { throws } from 'assert';
+import { Dropdown } from '../../shared';
 
 const theme = require('../theme.css');
 
@@ -41,20 +41,33 @@ export default class AddOrEditPostModal extends Component {
         slot4Product: '',
         slot5Product: '',
 
-        slot1Alts: '',
-        slot2Alts: '',
-        slot3Alts: '',
-        slot4Alts: '',
-        slot5Alts: '',
-    }
+        category1: '',
+        category2: '',
+        category3: '',
+        category4: '',
+        category5: '',
 
+        count1Alts: '',
+        count2Alts: '',
+        count3Alts: '',
+        count4Alts: '',
+        count5Alts: '',
+    }
+    getInitInstagramSlots = () => {
+        return INST_SLOTS.map((slotNumber) => {
+            return {
+                postTitle: `Instagram Embed ${slotNumber}`,
+                ...this.initInstaSlot
+            }
+        })
+    }
     state = {
         title: '',
         timeAgo: 0,
         date: '',
         inspirationalImageURL: '',
 
-        instagramSlots: [],
+        instagramSlots: this.getInitInstagramSlots(),
 
         errorMsg: null
     };
@@ -62,7 +75,6 @@ export default class AddOrEditPostModal extends Component {
     componentDidUpdate(prevProps) {
         if (this.props.isOpen !== prevProps.isOpen && this.props.isOpen === true) {
             const { postId, getPostData } = this.props;
-
             if (postId) {
                 const postData = getPostData(postId);
                 this.type = types.edit;
@@ -75,22 +87,13 @@ export default class AddOrEditPostModal extends Component {
                 })
             } else {
                 this.type = types.add;
-                this.clearForm();
             }
         }
     }
 
-    getInitInstagramSlots = () => {
-        return INST_SLOTS.map( (slotNumber) => {
-            return {
-                postTitle: `Instagram Embed ${slotNumber}`,
-                ...this.initInstaSlot
-            }
-        })
-    }
 
     savePost = () => {
-        const { onClose, setPostData, addNewPost, postId } = this.props;
+        const { setPostData, addNewPost, postId } = this.props;
         const {
             title,
             inspirationalImageURL,
@@ -106,15 +109,15 @@ export default class AddOrEditPostModal extends Component {
         };
 
         this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
-        onClose()
+        this.onCloseForm();
     };
 
     setSlots = () => {
-        return this.state.instagramSlots.map((instSlot) => {
-            const slots =  SLOTS.map((slot, i) => {
+        return this.state.instagramSlots.map((instSlot, instIndex) => {
+            const slots = SLOTS.map((slot, i) => {
                 const productId = instSlot[`slot${i + 1}Product`];
                 if (!productId) return null;
-                const alts = this.getAlternatives(instSlot[`slot${i + 1}Alts`]);
+                const alts = this.getAlternatives(instIndex, i);
                 return {
                     productId: +productId,
                     alternatives: alts,
@@ -125,7 +128,13 @@ export default class AddOrEditPostModal extends Component {
                 slots
             }
         })
+    };
 
+    getAlternatives = (instIndex, slotNumber) => {
+        const { getProductsIdsByCategory, categories } = this.props;
+        const countAlts = this.state.instagramSlots[instIndex][`count${slotNumber + 1}Alts`];
+        const category = this.state.instagramSlots[instIndex][`category${slotNumber + 1}`] || categories[0];
+        return getProductsIdsByCategory(category, countAlts);
     };
 
     getSlots = (instSlots) => {
@@ -137,20 +146,15 @@ export default class AddOrEditPostModal extends Component {
             };
             _instSlot.slots.forEach((slot, i) => {
                 instSlot[`slot${i + 1}Product`] = slot.productId;
-                instSlot[`slot${i + 1}Alts`] = slot.alternatives.join('\n');
+                instSlot[`category${i + 1}`] = this.props.getCategoryByProductId(slot.alternatives[0]);
+                instSlot[`count${i + 1}Alts`] = slot.alternatives.length;
             });
             return instSlot;
         });
     };
 
-    getAlternatives = (alternatives) => {
-        return alternatives ?
-            alternatives.split('\n').filter(Boolean).map(id => +id) :
-            []
-    };
-
     render() {
-        const { isOpen, onClose } = this.props;
+        const { isOpen } = this.props;
         const type = this.type;
 
         return (
@@ -198,7 +202,7 @@ export default class AddOrEditPostModal extends Component {
                 </ModalBody>
                 <ModalFooter>
                     <Button outline color="primary" onClick={this.savePost}>{submitText[type]}</Button>{' '}
-                    <Button outline color="secondary" onClick={onClose}>Cancel</Button>
+                    <Button outline color="secondary" onClick={this.onCloseForm}>Cancel</Button>
                 </ModalFooter>
             </Modal>
         )
@@ -215,13 +219,17 @@ export default class AddOrEditPostModal extends Component {
                             onChange={(event) => this.handleSlotProduct(slot, instIndex, event.target.value)}
                             id={`slot${slot}`}
                             type="text" />
-                        <Label for={`slot${slot}Alts`}>{`Slot #${slot} Alternatives`}</Label>
+                        <Label >{`Slot #${slot} Alternatives`}</Label>
+                        <Dropdown
+                            currentValue={this.state.instagramSlots[instIndex][`category${slot}`] || 'Category'}
+                            changeItem={(event) => this.handleCat(slot, instIndex, event.target.innerText)}
+                            valuesList={this.props.categories} />
+                        <Label for={`count${slot}Alts`}>{`Number of alternatives`}</Label>
                         <Input
-                            value={this.state.instagramSlots[instIndex][`slot${slot}Alts`]}
-                            onChange={(event) => this.handleSlotAlts(slot, instIndex, event.target.value)}
-                            id={`slot${slot}Alts`}
-                            type="textarea"
-                            rows="8" />
+                            value={this.state.instagramSlots[instIndex][`count${slot}Alts`]}
+                            onChange={(event) => this.handleCountAlts(slot, instIndex, event.target.value)}
+                            id={`count${slot}Alts`}
+                            type="text" />
                     </FormGroup>
                 </Col>
             )
@@ -260,9 +268,7 @@ export default class AddOrEditPostModal extends Component {
     handleInstagramURL = (instIndex, value) => {
         const instSlot = { ...this.state.instagramSlots[instIndex] };
         instSlot.instagramURL = value;
-        const instagramSlots = [...this.state.instagramSlots];
-        instagramSlots.splice(instIndex, 1, instSlot);
-        this.setState({ instagramSlots })
+        this.updateInstagramSlots(instIndex, instSlot);
     };
 
     handleSlotProduct = (slot, instIndex, value) => {
@@ -271,18 +277,29 @@ export default class AddOrEditPostModal extends Component {
         }
         const instSlot = { ...this.state.instagramSlots[instIndex] };
         instSlot[`slot${slot}Product`] = value;
-        const instagramSlots = [...this.state.instagramSlots];
-        instagramSlots.splice(instIndex, 1, instSlot);
-        this.setState({ instagramSlots });
+        this.updateInstagramSlots(instIndex, instSlot);
     };
-    handleSlotAlts = (slot, instIndex, value) => {
-        if (!(isNumber(value.replace(/\n/g, '')) || value === '')) {
+
+    handleCountAlts = (slot, instIndex, value) => {
+        if (!(isNumber(value) || value === '')) {
             return;
         }
         const instSlot = { ...this.state.instagramSlots[instIndex] };
-        instSlot[`slot${slot}Alts`] = value;
+        instSlot[`count${slot}Alts`] = value;
+        this.updateInstagramSlots(instIndex, instSlot);
+    }
+    handleCat = (slot, instIndex, value) => {
+        const instSlot = { ...this.state.instagramSlots[instIndex] };
+        instSlot[`category${slot}`] = value;
+        this.updateInstagramSlots(instIndex, instSlot);
+    }
+    updateInstagramSlots = (instIndex, instSlot) => {
         const instagramSlots = [...this.state.instagramSlots];
         instagramSlots.splice(instIndex, 1, instSlot);
         this.setState({ instagramSlots });
+    }
+    onCloseForm = () => {
+        this.props.onClose();
+        this.clearForm();
     }
 }
