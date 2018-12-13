@@ -105,21 +105,6 @@ export default class ObservableStore {
 
     };
 
-    @action
-    getProductsIdsByCategory = (category, countAlts) => {
-        return this.allProducts
-            .filter(product => product.category === category)
-            .slice(0, countAlts)
-            .map(product => product.id);
-    }
-
-    @action
-    getCategoryByProductId = (id) => {
-        return this.allProducts
-            .find(product => product.id === id)
-            .category;
-    }
-
     getCategories = () => {
         if (!this.allProducts.length) return [];
         let categories = [];

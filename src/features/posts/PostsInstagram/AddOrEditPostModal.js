@@ -114,43 +114,44 @@ export default class AddOrEditPostModal extends Component {
 
     setSlots = () => {
         return this.state.instagramSlots.map((instSlot, instIndex) => {
-            const slots = SLOTS.map((slot, i) => {
-                const productId = instSlot[`slot${i + 1}Product`];
+            const slots = SLOTS.map((slot) => {
+                const productId = instSlot[`slot${slot}Product`];
                 if (!productId) return null;
-                const alts = this.getAlternatives(instIndex, i);
                 return {
                     productId: +productId,
-                    alternatives: alts,
+                    categoryAlts: this.state.instagramSlots[instIndex][`category${slot}`] || this.props.categories[0],
+                    countAlts: +this.state.instagramSlots[instIndex][`count${slot}Alts`]
                 };
             }).filter(Boolean);
             return {
                 instagramURL: instSlot.instagramURL,
                 slots
             }
-        })
-    };
-
-    getAlternatives = (instIndex, slotNumber) => {
-        const { getProductsIdsByCategory, categories } = this.props;
-        const countAlts = this.state.instagramSlots[instIndex][`count${slotNumber + 1}Alts`];
-        const category = this.state.instagramSlots[instIndex][`category${slotNumber + 1}`] || categories[0];
-        return getProductsIdsByCategory(category, countAlts);
+        }).filter(instaSlots => instaSlots.slots.length);
     };
 
     getSlots = (instSlots) => {
         if (!instSlots.length) return this.getInitInstagramSlots();
-        return instSlots.map((_instSlot, instIndex) => {
+        const postsSlots = instSlots.map((_instSlot, instIndex) => {
             const instSlot = {
                 postTitle: `Instagram Embed ${instIndex + 1}`,
                 instagramURL: _instSlot.instagramURL
             };
             _instSlot.slots.forEach((slot, i) => {
                 instSlot[`slot${i + 1}Product`] = slot.productId;
-                instSlot[`category${i + 1}`] = this.props.getCategoryByProductId(slot.alternatives[0]);
-                instSlot[`count${i + 1}Alts`] = slot.alternatives.length;
+                instSlot[`category${i + 1}`] = slot.categoryAlts,
+                instSlot[`count${i + 1}Alts`] = slot.countAlts
             });
             return instSlot;
         });
+        if (postsSlots.length < 10) {
+            const postsLength = postsSlots.length;
+            const initSlots = this.getInitInstagramSlots();
+            initSlots.splice(0, postsLength, ...postsSlots);
+            return initSlots;
+        } else {
+            return postsSlots;
+        }
     };
 
     render() {
