@@ -127,7 +127,7 @@ export default class AddOrEditPostModal extends Component {
                 instagramURL: instSlot.instagramURL,
                 slots
             }
-        })
+        }).filter(instaSlots => instaSlots.slots.length);
     };
 
     getAlternatives = (instIndex, slotNumber) => {
@@ -139,7 +139,7 @@ export default class AddOrEditPostModal extends Component {
 
     getSlots = (instSlots) => {
         if (!instSlots.length) return this.getInitInstagramSlots();
-        return instSlots.map((_instSlot, instIndex) => {
+        const postsSlots = instSlots.map((_instSlot, instIndex) => {
             const instSlot = {
                 postTitle: `Instagram Embed ${instIndex + 1}`,
                 instagramURL: _instSlot.instagramURL
@@ -151,6 +151,14 @@ export default class AddOrEditPostModal extends Component {
             });
             return instSlot;
         });
+        if (postsSlots.length < 10) {
+            const postsLength = postsSlots.length;
+            const initSlots = this.getInitInstagramSlots();
+            initSlots.splice(0, postsLength, ...postsSlots);
+            return initSlots;
+        } else {
+            return postsSlots;
+        }
     };
 
     render() {
