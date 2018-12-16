@@ -34,7 +34,7 @@ export default class Posts extends Component {
     };
 
     render() {
-        const { posts, getPostData, setPostData, addNewPost, categories } = this.props;
+        const { posts, getPostData, setPostData, addNewPost, categories, getProductsIdsByCategory, getCategoryByProductId } = this.props;
 
         return (
             <div className={theme.listWrapper}>
@@ -62,6 +62,8 @@ export default class Posts extends Component {
                     setPostData={setPostData}
                     addNewPost={addNewPost}
                     categories={categories}
+                    getProductsIdsByCategory={getProductsIdsByCategory}
+                    getCategoryByProductId={getCategoryByProductId}
                 />
             </div>
         )

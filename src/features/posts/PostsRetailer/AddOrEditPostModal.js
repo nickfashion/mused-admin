@@ -79,8 +79,9 @@ export default class AddOrEditPostModal extends Component {
         if (!slots) return s1;
         slots.forEach((slot, i) => {
             s1[`slot${i + 1}Product`] = slot.productId;
-            s1[`category${i + 1}`] = slot.categoryAlts,
-            s1[`count${i + 1}Alts`] = slot.countAlts
+            // make sure that slot.alternatives[0] exist
+            s1[`category${i + 1}`] = this.props.getCategoryByProductId(slot.alternatives[0]);
+            s1[`count${i + 1}Alts`] = slot.alternatives.length;
         });
 
         return s1;
@@ -106,15 +107,22 @@ export default class AddOrEditPostModal extends Component {
     };
 
     setSlots = () => {
-        return SLOTS.map((slot) => {
-            const productId = this.state[`slot${slot}Product`];
+        return SLOTS.map((slot, i) => {
+            const productId = this.state[`slot${i + 1}Product`];
             if (!productId) return null;
+            const alts = this.getAlternatives(i);
             return {
                 productId: +productId,
-                categoryAlts: this.state[`category${slot}`] || this.props.categories[0],
-                countAlts:  +this.state[`count${slot}Alts`]
+                alternatives: alts,
             };
         }).filter(Boolean);
+    };
+
+    getAlternatives = (slotNumber) => {
+        const { getProductsIdsByCategory, categories } = this.props;
+        const countAlts = this.state[`count${slotNumber + 1}Alts`];
+        const category = this.state[`category${slotNumber + 1}`] || categories[0];
+        return getProductsIdsByCategory(category, countAlts);
     };
 
     render() {
