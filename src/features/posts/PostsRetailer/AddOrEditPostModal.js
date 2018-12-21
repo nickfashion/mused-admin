@@ -32,6 +32,7 @@ export default class AddOrEditPostModal extends Component {
         timeAgo: 0,
         date: '',
         inspirationalImageURL: '',
+        hidden: 0,
 
         slot1Product: '',
         slot2Product: '',
@@ -66,6 +67,7 @@ export default class AddOrEditPostModal extends Component {
                     title: postData.title || '',
                     date: postData.date || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
+                    hidden: typeof postData.hidden !== 'undefined' && postData.hidden || 0,
                     ...slots
                 })
             } else {
@@ -93,12 +95,14 @@ export default class AddOrEditPostModal extends Component {
             title,
             inspirationalImageURL,
             timeAgo,
-            date
+            date,
+            hidden
         } = this.state;
         const post = {
             title,
             date: this.type === types.add ? new Date(dateMinusHours(timeAgo)) : date,
             inspirationalImage: inspirationalImageURL,
+            hidden: Number(hidden),
             slots: this.setSlots()
         };
 
@@ -164,6 +168,14 @@ export default class AddOrEditPostModal extends Component {
                                         id="inspirationalImage"
                                         type="text" />
                                 </FormGroup>
+                                <FormGroup>
+                                    <Label>Hidden</Label>
+                                    <Dropdown
+                                        currentValue={this.getHiddenValue(this.state.hidden) || 'Select Hidden'}
+                                        valuesList={['0', '1']}
+                                        changeItem={this.handleHidden}
+                                    />
+                                </FormGroup>
                                 <Row>
                                     {this.renderSlots()}
                                 </Row>
@@ -213,6 +225,7 @@ export default class AddOrEditPostModal extends Component {
         title: '',
         timeAgo: 0,
         inspirationalImageURL: '',
+        hidden: 0,
 
         slot1Product: '',
         slot2Product: '',
@@ -236,7 +249,8 @@ export default class AddOrEditPostModal extends Component {
     handleInspirationalImage = (event) => this.setState({ inspirationalImageURL: event.target.value });
     handleTitle = (event) => this.setState({ title: event.target.value });
     handleTimeAgo = (event) => this.setState({ timeAgo: event.target.value });
-    handleCat = (slot, event) => this.setState({ [`category${slot}`]: event.target.innerText })
+    handleCat = (slot, event) => this.setState({ [`category${slot}`]: event.target.innerText });
+    handleHidden = (event) => this.setState({ hidden: event.target.innerText });
     handleCountAlts = (slot, event) => {
         if (!(isNumber(event.target.value ) || event.target.value === '')) {
             return;
@@ -247,6 +261,11 @@ export default class AddOrEditPostModal extends Component {
         (isNumber(value) || value === '') &&
             this.setState({ [`slot${slot}Product`]: value });
     };
+    getHiddenValue = (hidden) => {
+        return hidden == '0'
+            ? 'no'
+            : 'yes';
+    }
     onCloseForm = () => {
         this.props.onClose();
         this.clearForm();

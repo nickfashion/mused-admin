@@ -47,6 +47,7 @@ export default class AddOrEditPostModal extends Component {
         inspirationalImageURL: '',
         backgroundImageURL: '',
         pin: '',
+        hidden: 0,
 
         slot1Product: '',
         slot2Product: '',
@@ -78,6 +79,7 @@ export default class AddOrEditPostModal extends Component {
                     inspirationalImageURL: postData.inspirationalImage || '',
                     backgroundImageURL: postData.backgroundImage || '',
                     pin: typeof postData.pin !== 'undefined' && postData.pin.toString() || '',
+                    hidden: typeof postData.hidden !== 'undefined' && postData.hidden || 0,
                     ...slots
                 })
             } else {
@@ -96,7 +98,8 @@ export default class AddOrEditPostModal extends Component {
             inspirationalImageURL,
             pin,
             timeAgo,
-            date
+            date,
+            hidden
         } = this.state;
         const post = {
             title,
@@ -105,13 +108,14 @@ export default class AddOrEditPostModal extends Component {
             authorProfilePhoto: authorProfilePhotoURL,
             inspirationalImage: inspirationalImageURL,
             pin: Number(pin),
+            hidden: Number(hidden),
             backgroundImage,
             slots: this.setSlots(),
             postType: 'inspire'
         };
 
         this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
-       this.onCloseForm();
+        this.onCloseForm();
     };
 
     setSlots = () => {
@@ -203,6 +207,14 @@ export default class AddOrEditPostModal extends Component {
                                         changeItem={this.handlePin}
                                     />
                                 </FormGroup>
+                                <FormGroup>
+                                    <Label>Hidden</Label>
+                                    <Dropdown
+                                        currentValue={this.getHiddenValue(this.state.hidden) || 'Select Hidden'}
+                                        valuesList={['0', '1']}
+                                        changeItem={this.handleHidden}
+                                    />
+                                </FormGroup>
                                 <Row>
                                     {this.renderSlots()}
                                 </Row>
@@ -251,6 +263,7 @@ export default class AddOrEditPostModal extends Component {
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
         pin: '',
+        hidden: 0,
         backgroundImageURL: '',
         slot1Product: '',
         slot2Product: '',
@@ -271,6 +284,7 @@ export default class AddOrEditPostModal extends Component {
     handleTitle = (event) => this.setState({ title: event.target.value });
     handleTimeAgo = (event) => this.setState({ timeAgo: event.target.value });
     handlePin = (event) => this.setState({ pin: event.target.innerText })
+    handleHidden = (event) => this.setState({ hidden: event.target.innerText })
 
     handleSlotProduct = (slot, value) => {
         (isNumber(value) || value === '') &&
@@ -279,6 +293,11 @@ export default class AddOrEditPostModal extends Component {
     handleSlotAlts = (slot, value) => {
         (isNumber(value.replace(/\n/g, '')) || value === '') &&
             this.setState({ [`slot${slot}Alts`]: value });
+    }
+    getHiddenValue = (hidden) => {
+        return hidden == '0'
+            ? 'no'
+            : 'yes';
     }
     onCloseForm = () => {
         this.props.onClose();

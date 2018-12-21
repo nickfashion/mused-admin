@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Row, Col, Button, Form, FormGroup, Label, Input, Alert, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { isNumber, dateMinusHours } from '../../../services/utils'
+import { Dropdown } from '../../shared'
 
 const theme = require('../theme.css');
 
@@ -30,6 +31,7 @@ export default class AddOrEditPostModal extends Component {
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
         pin: '',
+        hidden: 0,
         productId: '',
         errorMsg: null
     };
@@ -49,6 +51,7 @@ export default class AddOrEditPostModal extends Component {
                     inspirationalImageURL: postData.inspirationalImage || '',
                     productId: postData.productId || '',
                     pin: typeof postData.pin !== 'undefined' && postData.pin.toString() || '',
+                    hidden: typeof postData.hidden !== 'undefined' && postData.hidden || 0,
                 })
             } else {
                 this.type = types.add;
@@ -65,7 +68,8 @@ export default class AddOrEditPostModal extends Component {
             inspirationalImageURL,
             timeAgo,
             date,
-            pin
+            pin,
+            hidden
         } = this.state;
         const post = {
             title,
@@ -75,6 +79,7 @@ export default class AddOrEditPostModal extends Component {
             inspirationalImage: inspirationalImageURL,
             productId: Number(this.state.productId),
             pin: Number(pin),
+            hidden: Number(hidden),
             postType: 'product'
         };
         this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
@@ -137,23 +142,20 @@ export default class AddOrEditPostModal extends Component {
                                         type="text" />
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="pin">Pin</Label>
-                                    <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown} id="pin">
-                                        <DropdownToggle caret>
-                                            {Boolean(this.state.pin) && this.state.pin || 'Select Pin'}
-                                        </DropdownToggle>
-                                        <DropdownMenu>
-                                            {
-                                                ['0', '1', '2', '3'].map(
-                                                    (value, index) =>
-                                                        <DropdownItem
-                                                            active={value === this.state.pin}
-                                                            onClick={this.handlePin}
-                                                            key={index}>{value}
-                                                        </DropdownItem>)
-                                            }
-                                        </DropdownMenu>
-                                    </Dropdown>
+                                    <Label>Pin</Label>
+                                    <Dropdown
+                                        currentValue={Boolean(this.state.pin) && this.state.pin || 'Select Pin'}
+                                        valuesList={['0', '1', '2', '3']}
+                                        changeItem={this.handlePin}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label>Hidden</Label>
+                                    <Dropdown
+                                        currentValue={this.getHiddenValue(this.state.hidden) || 'Select Hidden'}
+                                        valuesList={['0', '1']}
+                                        changeItem={this.handleHidden}
+                                    />
                                 </FormGroup>
                                 <FormGroup>
                                     <Label for={'productId'}>Product Id</Label>
@@ -186,6 +188,7 @@ export default class AddOrEditPostModal extends Component {
         authorProfilePhotoURL: '',
         inspirationalImageURL: '',
         pin: '',
+        hidden: 0,
         productId: ''
     });
 
@@ -195,18 +198,16 @@ export default class AddOrEditPostModal extends Component {
     handleInspirationalImage = (event) => this.setState({ inspirationalImageURL: event.target.value });
     handleTimeAgo = (event) => this.setState({ timeAgo: event.target.value });
     handlePin = (event) => this.setState({ pin: event.target.innerText })
-
-
+    handleHidden = (event) => this.setState({ hidden: event.target.innerText })
 
     handleProductId = (value) => {
         (isNumber(value) || value === '') &&
             this.setState({ productId: value });
     };
-
-    toggleDropdown = () => {
-        this.setState(prevState => ({
-            dropdownOpen: !prevState.dropdownOpen
-        }));
+    getHiddenValue = (hidden) => {
+        return hidden == '0'
+            ? 'no'
+            : 'yes';
     }
     onCloseForm = () => {
         this.props.onClose();

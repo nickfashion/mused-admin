@@ -66,6 +66,7 @@ export default class AddOrEditPostModal extends Component {
         timeAgo: 0,
         date: '',
         inspirationalImageURL: '',
+        hidden: 0,
 
         instagramSlots: this.getInitInstagramSlots(),
 
@@ -83,6 +84,7 @@ export default class AddOrEditPostModal extends Component {
                     title: postData.title || '',
                     date: postData.date || '',
                     inspirationalImageURL: postData.inspirationalImage || '',
+                    hidden: typeof postData.hidden !== 'undefined' && postData.hidden || 0,
                     instagramSlots: slots
                 })
             } else {
@@ -98,12 +100,14 @@ export default class AddOrEditPostModal extends Component {
             title,
             inspirationalImageURL,
             timeAgo,
-            date
+            date,
+            hidden
         } = this.state;
         const post = {
             title,
             date: this.type === types.add ? new Date(dateMinusHours(timeAgo)) : date,
             inspirationalImage: inspirationalImageURL,
+            hidden: Number(hidden),
             slots: this.setSlots(),
             postType: 'instagram'
         };
@@ -200,6 +204,14 @@ export default class AddOrEditPostModal extends Component {
                                         id="inspirationalImage"
                                         type="text" />
                                 </FormGroup>
+                                <FormGroup>
+                                    <Label>Hidden</Label>
+                                    <Dropdown
+                                        currentValue={this.getHiddenValue(this.state.hidden) || 'Select Hidden'}
+                                        valuesList={['0', '1']}
+                                        changeItem={this.handleHidden}
+                                    />
+                                </FormGroup>
                                 {this.renderInstagramSlots()}
                                 {this.state.errorMsg && <Alert color="danger">
                                     {this.state.errorMsg}
@@ -267,6 +279,7 @@ export default class AddOrEditPostModal extends Component {
         title: '',
         timeAgo: 0,
         inspirationalImageURL: '',
+        hidden: 0,
         instagramSlots: this.getInitInstagramSlots(),
     });
 
@@ -278,6 +291,7 @@ export default class AddOrEditPostModal extends Component {
         instSlot.instagramURL = value;
         this.updateInstagramSlots(instIndex, instSlot);
     };
+    handleHidden = (event) => this.setState({ hidden: event.target.innerText })
 
     handleSlotProduct = (slot, instIndex, value) => {
         if (!(isNumber(value) || value === '')) {
@@ -305,6 +319,11 @@ export default class AddOrEditPostModal extends Component {
         const instagramSlots = [...this.state.instagramSlots];
         instagramSlots.splice(instIndex, 1, instSlot);
         this.setState({ instagramSlots });
+    }
+    getHiddenValue = (hidden) => {
+        return hidden == '0'
+            ? 'no'
+            : 'yes';
     }
     onCloseForm = () => {
         this.props.onClose();
