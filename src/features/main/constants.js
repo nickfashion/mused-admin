@@ -4,6 +4,7 @@ export const POSTS_LIST_TAB = 'postsList';
 export const POSTS_PRODUCT_TAB = 'postsProduct';
 export const POSTS_RETAILER_TAB = 'postsRetailer';
 export const POSTS_INSTAGRAM_TAB = 'postsInstagram';
+export const POSTS_MATCH_TAB = 'postsMatch';
 
 export const tabList = [
     {
@@ -29,5 +30,9 @@ export const tabList = [
     {
         name: POSTS_INSTAGRAM_TAB,
         text: 'Posts (Instagram)'
+    },
+    {
+        name: POSTS_MATCH_TAB,
+        text: 'Posts (Match)'
     }
 ];

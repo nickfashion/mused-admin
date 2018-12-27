@@ -1,7 +1,7 @@
 import { observable, action } from 'mobx';
 import _ from 'lodash'
 import { getPostsByType, addPost, addPostRetailer, deletePostById, deletePostRetailerById, updatePost, updatePostRetailer, getPostsRetailer } from '../services';
-import { INSPIRE_POSTS, LIST_POSTS, PRODUCT_POSTS, INSTAGRAM_POSTS } from './constants';
+import { INSPIRE_POSTS, LIST_POSTS, PRODUCT_POSTS, INSTAGRAM_POSTS, MATCH_POSTS } from './constants';
 
 export default class ObservableStore {
     constructor(root) { }
@@ -11,6 +11,7 @@ export default class ObservableStore {
     @observable postsProduct = [];
     @observable postsInstagram = [];
     @observable postsRetailer = [];
+    @observable postsMatch = [];
 
 
     get listOfPostsInspire() {
@@ -29,12 +30,12 @@ export default class ObservableStore {
         return this.postsInstagram;
     }
 
-    get listOfPostsInstagram() {
-        return this.postsInstagram;
-    }
-
     get listOfPostsRetailer() {
         return this.postsRetailer;
+    }
+
+    get listOfPostsMatch() {
+        return this.postsMatch;
     }
 
     @action
@@ -55,6 +56,11 @@ export default class ObservableStore {
     @action
     getInstagramPosts = async () => {
         this.postsInstagram = await getPostsByType(INSTAGRAM_POSTS);
+    };
+
+    @action
+    getMatchPosts = async () => {
+        this.postsMatch = await getPostsByType(MATCH_POSTS);
     };
 
     @action
@@ -105,6 +111,16 @@ export default class ObservableStore {
         try {
             await addPost(post);
             await this.getInstagramPosts();
+        } catch (error) {
+            console.error(error)
+        }
+    };
+
+    @action
+    addNewPostMatch = async (post) => {
+        try {
+            await addPost(post);
+            await this.getMatchPosts();
         } catch (error) {
             console.error(error)
         }

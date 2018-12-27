@@ -6,9 +6,18 @@ import {
     Nav, NavItem, NavLink
 } from 'reactstrap';
 import { ListBuilder } from "../../list-builder";
-import { PostsInspire, PostsList, PostsProduct, PostsInstagram, PostRetailer } from "../../posts";
+import { PostsInspire, PostsList, PostsProduct, PostsInstagram, PostRetailer, PostMatch } from "../../posts";
 import { AuthInfo } from "../../auth-info";
-import { PRODUCTS_TAB, POSTS_INSPIRE_TAB, POSTS_LIST_TAB, POSTS_PRODUCT_TAB, POSTS_RETAILER_TAB, POSTS_INSTAGRAM_TAB, tabList } from '../constants';
+import {
+    PRODUCTS_TAB,
+    POSTS_INSPIRE_TAB,
+    POSTS_LIST_TAB,
+    POSTS_PRODUCT_TAB,
+    POSTS_RETAILER_TAB,
+    POSTS_INSTAGRAM_TAB,
+    POSTS_MATCH_TAB,
+    tabList
+} from '../constants';
 const theme = require('./theme.css');
 
 export default class Main extends Component {
@@ -57,6 +66,9 @@ export default class Main extends Component {
                             </TabPane>
                             <TabPane tabId={POSTS_INSTAGRAM_TAB}>
                                 <PostsInstagram />
+                            </TabPane>
+                            <TabPane tabId={POSTS_MATCH_TAB}>
+                                <PostMatch />
                             </TabPane>
                         </TabContent>
                     </Col>
