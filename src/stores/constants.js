@@ -14,8 +14,6 @@ export const INSPIRE_POSTS = 'inspire';
 export const LIST_POSTS = 'list';
 export const PRODUCT_POSTS = 'product';
 export const INSTAGRAM_POSTS = 'instagram';
-export const RETAILER_POSTS = 'retailer';
-export const MATCH_POSTS = 'match';
 
 export const COLORS = [
     'Beige',

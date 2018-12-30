@@ -84,8 +84,7 @@ export default class AddOrEditPostModal extends Component {
             productIds: this.setProductIds(this.state.productIds),
             date: this.type === types.add ? new Date(dateMinusHours(timeAgo)) : date,
             pin: Number(pin),
-            hidden: Number(hidden),
-            postType: 'match'
+            hidden: Number(hidden)
         };
         this.type === types.edit ? setPostData({ postId, ...post }) : addNewPost(post);
         this.onCloseForm();

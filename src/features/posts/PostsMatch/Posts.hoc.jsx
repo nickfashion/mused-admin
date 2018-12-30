@@ -11,11 +11,12 @@ function PostsHOC(Posts) {
     class NewComp extends Component {
 
         postType = 'postsMatch';
+        collectionType = 'matchposts';
     
         componentDidMount() {
             const { root: { posts } } = this.props;
-            const { getListPosts } = posts;
-            getListPosts();
+            const { getMatchPosts } = posts;
+            getMatchPosts();
         }
 
         render() {
@@ -33,8 +34,8 @@ function PostsHOC(Posts) {
 
         _deletePost = (id) => {
             const { root: { posts } } = this.props;
-            const {  deletePost } = posts;
-            deletePost(id, this.postType);
+            const {  deletePostSinColById } = posts;
+            deletePostSinColById(id, this.postType, this.collectionType);
         }
 
         _getPostData = (id) => {
@@ -46,7 +47,7 @@ function PostsHOC(Posts) {
         _setPostData = (post) => {
             const { root: { posts } } = this.props;
             const {  setPostData } = posts;
-            return setPostData(post, this.postType);
+            return setPostData(post, this.postType, this.collectionType);
         }
 
     }

@@ -28,9 +28,9 @@ export const getPostsByType = (type) => {
     return client.callFunction("getPostsByType", [type]);
 };
 
-export const getPostsRetailer = (type) => {
+export const getPostsSinCol = (collectionType) => {
     const client = getClient();
-    return client.callFunction("getPostsRetailer");
+    return client.callFunction("getPostsSinCol", [collectionType]);
 }
 
 export const addPost = (post) => {
@@ -38,9 +38,9 @@ export const addPost = (post) => {
     return client.callFunction("addPost", [ post ]);
 };
 
-export const addPostRetailer = (post) => {
+export const addPostSinCol = (post, collectionType) => {
     const client = getClient();
-    return client.callFunction("addPostRetailer", [ post ]);
+    return client.callFunction("addPostSinCol", [ post, collectionType]);
 };
 
 export const deletePostById = (postId) => {
@@ -48,9 +48,9 @@ export const deletePostById = (postId) => {
     return client.callFunction("deletePostById", [ postId ]);
 };
 
-export const deletePostRetailerById = (postId) => {
+export const deletePostSinColById = (postId, collectionType) => {
     const client = getClient();
-    return client.callFunction("deletePostRetailerById", [ postId ]);
+    return client.callFunction("deletePostSinColById", [ postId, collectionType]);
 };
 
 export const updatePost = (post) => {
@@ -58,7 +58,7 @@ export const updatePost = (post) => {
     return client.callFunction("updatePost", [ post ]);
 };
 
-export const updatePostRetailer = (post) => {
+export const updatePostSinCol = (post, collectionType) => {
     const client = getClient();
-    return client.callFunction("updatePostRetailer", [ post ]);
+    return client.callFunction("updatePostSinCol", [ post, collectionType]);
 };

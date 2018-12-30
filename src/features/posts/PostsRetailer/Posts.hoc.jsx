@@ -11,6 +11,7 @@ function PostsHOC(Posts) {
     class NewComp extends Component {
 
         postType = 'postsRetailer';
+        collectionType = 'merchantposts';
     
         componentDidMount() {
             const { root: { posts } } = this.props;
@@ -38,8 +39,8 @@ function PostsHOC(Posts) {
 
         _deletePost = (id) => {
             const { root: { posts } } = this.props;
-            const {  deletePostRetailer } = posts;
-            deletePostRetailer(id, this.postType);
+            const {  deletePostSinColById } = posts;
+            deletePostSinColById(id, this.postType, this.collectionType);
         }
 
         _getPostData = (id) => {
@@ -51,7 +52,7 @@ function PostsHOC(Posts) {
         _setPostData = (post) => {
             const { root: { posts } } = this.props;
             const {  setPostData } = posts;
-            return setPostData(post, this.postType);
+            return setPostData(post, this.postType, this.collectionType);
         }
 
     }

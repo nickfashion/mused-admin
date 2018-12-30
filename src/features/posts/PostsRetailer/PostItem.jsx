@@ -12,7 +12,7 @@ export default class PostItem extends Component {
         return (
             <Row className={theme.itemWrapper}>
                 <Col xs="6">
-                    {title && <p className={theme.titleSize}>{cutString(title, 50)}</p>}
+                    {title && <h4 className={theme.titleSize}>{cutString(title, 50)}</h4>}
                 </Col>
                 <Col xs="6" className={theme.buttonsGroup}>
                     <Button outline color="secondary"

@@ -1,7 +1,7 @@
 import { observable, action } from 'mobx';
 import _ from 'lodash'
-import { getPostsByType, addPost, addPostRetailer, deletePostById, deletePostRetailerById, updatePost, updatePostRetailer, getPostsRetailer } from '../services';
-import { INSPIRE_POSTS, LIST_POSTS, PRODUCT_POSTS, INSTAGRAM_POSTS, MATCH_POSTS } from './constants';
+import * as api from '../services';
+import { INSPIRE_POSTS, LIST_POSTS, PRODUCT_POSTS, INSTAGRAM_POSTS } from './constants';
 
 export default class ObservableStore {
     constructor(root) { }
@@ -40,46 +40,46 @@ export default class ObservableStore {
 
     @action
     getInspirePosts = async () => {
-        this.postsInspire = await getPostsByType(INSPIRE_POSTS);
+        this.postsInspire = await api.getPostsByType(INSPIRE_POSTS);
     };
 
     @action
     getListPosts = async () => {
-        this.postsList = await getPostsByType(LIST_POSTS);
+        this.postsList = await api.getPostsByType(LIST_POSTS);
     };
 
     @action
     getProductPosts = async () => {
-        this.postsProduct = await getPostsByType(PRODUCT_POSTS);
+        this.postsProduct = await api.getPostsByType(PRODUCT_POSTS);
     };
 
     @action
     getInstagramPosts = async () => {
-        this.postsInstagram = await getPostsByType(INSTAGRAM_POSTS);
+        this.postsInstagram = await api.getPostsByType(INSTAGRAM_POSTS);
     };
 
     @action
     getMatchPosts = async () => {
-        this.postsMatch = await getPostsByType(MATCH_POSTS);
+        this.postsMatch = await api.getPostsSinCol('matchposts');
     };
 
     @action
     getRetailerPosts = async () => {
-        this.postsRetailer = await getPostsRetailer();
+        this.postsRetailer = await api.getPostsSinCol('merchantposts');
     };
 
     @action
-    setPostData = async (post, postType) => {
-        const updatedPost = postType === 'postsRetailer'
-            ? await updatePostRetailer(post)
-            : await updatePost(post);
+    setPostData = async (post, postType, collectionType) => {
+        const updatedPost = postType === 'postsRetailer' || postType === 'postsMatch'
+            ? await api.updatePostSinCol(post, collectionType)
+            : await api.updatePost(post);
         this.collectionUpdatePost({ ...updatedPost, postId: post.postId }, postType);
     };
 
     @action
     addNewPostInspire = async (post) => {
         try {
-            await addPost(post);
+            await api.addPost(post);
             await this.getInspirePosts();
         } catch (error) {
             console.error(error)
@@ -89,7 +89,7 @@ export default class ObservableStore {
     @action
     addNewPostList = async (post) => {
         try {
-            await addPost(post);
+            await api.addPost(post);
             await this.getListPosts();
         } catch (error) {
             console.error(error)
@@ -99,7 +99,7 @@ export default class ObservableStore {
     @action
     addNewPostProduct = async (post) => {
         try {
-            await addPost(post);
+            await api.addPost(post);
             await this.getProductPosts();
         } catch (error) {
             console.error(error)
@@ -109,7 +109,7 @@ export default class ObservableStore {
     @action
     addNewPostInstagram = async (post) => {
         try {
-            await addPost(post);
+            await api.addPost(post);
             await this.getInstagramPosts();
         } catch (error) {
             console.error(error)
@@ -119,7 +119,7 @@ export default class ObservableStore {
     @action
     addNewPostMatch = async (post) => {
         try {
-            await addPost(post);
+            await api.addPostSinCol(post, 'matchposts');
             await this.getMatchPosts();
         } catch (error) {
             console.error(error)
@@ -129,7 +129,7 @@ export default class ObservableStore {
     @action
     addNewPostRetailer = async (post) => {
         try {
-            await addPostRetailer(post);
+            await api.addPostSinCol(post, 'merchantposts');
             await this.getRetailerPosts();
         } catch (error) {
             console.error(error)
@@ -139,7 +139,7 @@ export default class ObservableStore {
     @action
     deletePost = async (postId, postType) => {
         try {
-            const data = await deletePostById(postId);
+            const data = await api.deletePostById(postId);
             if (data.deletedCount) {
                 this.collectionDeletePost(postId, postType);
             }
@@ -149,9 +149,9 @@ export default class ObservableStore {
     };
 
     @action
-    deletePostRetailer = async (postId, postType) => {
+    deletePostSinColById = async (postId, postType, collectionType) => {
         try {
-            const data = await deletePostRetailerById(postId);
+            const data = await api.deletePostSinColById(postId, collectionType);
             if (data.deletedCount) {
                 this.collectionDeletePost(postId, postType);
             }
@@ -159,6 +159,7 @@ export default class ObservableStore {
             console.error(error)
         }
     };
+    
 
     @action
     getPostData = (id, postType) => {
