@@ -115,9 +115,10 @@ export default class ObservableStore {
 
     @action
     getCategoryByProductId = (id) => {
-        return this.allProducts
-            .find(product => product.id === id)
-            .category;
+        const product = this.allProducts.find(product => product.id === id);
+        return product
+            ? product.category
+            : 'deleted';
     }
 
     getCategories = () => {
