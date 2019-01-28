@@ -12,6 +12,7 @@ export default class ObservableStore {
     @observable postsInstagram = [];
     @observable postsRetailer = [];
     @observable postsMatch = [];
+    @observable postsRandom = [];
 
 
     get listOfPostsInspire() {
@@ -36,6 +37,10 @@ export default class ObservableStore {
 
     get listOfPostsMatch() {
         return this.postsMatch;
+    }
+    
+    get listOfPostsRandom() {
+        return this.postsRandom;
     }
 
     @action
@@ -69,8 +74,13 @@ export default class ObservableStore {
     };
 
     @action
+    getRandomPosts = async () => {
+        this.postsRandom = await api.getPostsSinCol('random');
+    };
+
+    @action
     setPostData = async (post, postType, collectionType) => {
-        const updatedPost = postType === 'postsRetailer' || postType === 'postsMatch'
+        const updatedPost = postType === 'postsRetailer' || postType === 'postsMatch' || postType === 'postsRandom'
             ? await api.updatePostSinCol(post, collectionType)
             : await api.updatePost(post);
         this.collectionUpdatePost({ ...updatedPost, postId: post.postId }, postType);
@@ -131,6 +141,16 @@ export default class ObservableStore {
         try {
             await api.addPostSinCol(post, 'merchantposts');
             await this.getRetailerPosts();
+        } catch (error) {
+            console.error(error)
+        }
+    };
+
+    @action
+    addNewPostRandom = async (post) => {
+        try {
+            await api.addPostSinCol(post, 'random');
+            await this.getRandomPosts();
         } catch (error) {
             console.error(error)
         }

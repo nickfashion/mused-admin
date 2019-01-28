@@ -5,6 +5,7 @@ export const POSTS_PRODUCT_TAB = 'postsProduct';
 export const POSTS_RETAILER_TAB = 'postsRetailer';
 export const POSTS_INSTAGRAM_TAB = 'postsInstagram';
 export const POSTS_MATCH_TAB = 'postsMatch';
+export const POSTS_RANDOM_TAB = 'postsRandom';
 
 export const tabList = [
     {
@@ -34,5 +35,9 @@ export const tabList = [
     {
         name: POSTS_MATCH_TAB,
         text: 'Posts (Match)'
+    },
+    {
+        name: POSTS_RANDOM_TAB,
+        text: 'Posts (New Products)'
     }
 ];

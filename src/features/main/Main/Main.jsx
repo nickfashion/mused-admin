@@ -6,7 +6,7 @@ import {
     Nav, NavItem, NavLink
 } from 'reactstrap';
 import { ListBuilder } from "../../list-builder";
-import { PostsInspire, PostsList, PostsProduct, PostsInstagram, PostRetailer, PostMatch } from "../../posts";
+import { PostsInspire, PostsList, PostsProduct, PostsInstagram, PostRetailer, PostMatch, PostRandom } from "../../posts";
 import { AuthInfo } from "../../auth-info";
 import {
     PRODUCTS_TAB,
@@ -16,6 +16,7 @@ import {
     POSTS_RETAILER_TAB,
     POSTS_INSTAGRAM_TAB,
     POSTS_MATCH_TAB,
+    POSTS_RANDOM_TAB,
     tabList
 } from '../constants';
 const theme = require('./theme.css');
@@ -69,6 +70,9 @@ export default class Main extends Component {
                             </TabPane>
                             <TabPane tabId={POSTS_MATCH_TAB}>
                                 <PostMatch />
+                            </TabPane>
+                            <TabPane tabId={POSTS_RANDOM_TAB}>
+                                <PostRandom />
                             </TabPane>
                         </TabContent>
                     </Col>
